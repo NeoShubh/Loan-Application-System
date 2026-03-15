@@ -1,0 +1,86 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.6.1">
+  <diagram name="Page-1" id="iSk-gIngvEySYrSHo7YL">
+    <mxGraphModel dx="2076" dy="1833" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <UserObject label="&lt;div style=&quot;background-color:#1e1f22;color:#bcbec4&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@Bean&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#b3ae60;&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;color:#cf8e6d;&quot;&gt;public &lt;/span&gt;SecurityFilterChain &lt;span style=&quot;color:#56a8f5;&quot;&gt;filterChain&lt;/span&gt;(HttpSecurity http) &lt;span style=&quot;color:#cf8e6d;&quot;&gt;throws &lt;/span&gt;Exception {&lt;br&gt;&lt;br&gt;        http&lt;br&gt;&lt;span style=&quot;color:#7a7e85;&quot;&gt;//          .cors(Customizer.withDefaults())&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#7a7e85;&quot;&gt;                &lt;/span&gt;.csrf(csrf -&amp;gt; csrf.disable())&lt;br&gt;                .authorizeHttpRequests(auth -&amp;gt; auth&lt;br&gt;                        .requestMatchers(HttpMethod.&lt;span style=&quot;color:#c77dbb;font-style:italic;&quot;&gt;OPTIONS&lt;/span&gt;, &lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;/**&quot;&lt;/span&gt;).permitAll()&lt;br&gt;                        .requestMatchers(&lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;/api/auth/**&quot;&lt;/span&gt;).permitAll()&lt;br&gt;                        .anyRequest().authenticated()&lt;br&gt;                )&lt;br&gt;                .addFilterBefore(&lt;span style=&quot;color:#c77dbb;&quot;&gt;jwtAuthenticationFilter&lt;/span&gt;,&lt;br&gt;                        UsernamePasswordAuthenticationFilter.&lt;span style=&quot;color:#cf8e6d;&quot;&gt;class&lt;/span&gt;);&lt;br&gt;&lt;br&gt;        &lt;span style=&quot;color:#cf8e6d;&quot;&gt;return &lt;/span&gt;http.build();&lt;br&gt;    &lt;/pre&gt;&lt;/div&gt;" link="&lt;div style=&quot;background-color:#1e1f22;color:#bcbec4&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@Bean&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#b3ae60;&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;color:#cf8e6d;&quot;&gt;public &lt;/span&gt;SecurityFilterChain &lt;span style=&quot;color:#56a8f5;&quot;&gt;filterChain&lt;/span&gt;(HttpSecurity http) &lt;span style=&quot;color:#cf8e6d;&quot;&gt;throws &lt;/span&gt;Exception {&lt;br&gt;&lt;br&gt;        http&lt;br&gt;&lt;span style=&quot;color:#7a7e85;&quot;&gt;//          .cors(Customizer.withDefaults())&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#7a7e85;&quot;&gt;                &lt;/span&gt;.csrf(csrf -&amp;gt; csrf.disable())&lt;br&gt;                .authorizeHttpRequests(auth -&amp;gt; auth&lt;br&gt;                        .requestMatchers(HttpMethod.&lt;span style=&quot;color:#c77dbb;font-style:italic;&quot;&gt;OPTIONS&lt;/span&gt;, &lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;/**&quot;&lt;/span&gt;).permitAll()&lt;br&gt;                        .requestMatchers(&lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;/api/auth/**&quot;&lt;/span&gt;).permitAll()&lt;br&gt;                        .anyRequest().authenticated()&lt;br&gt;                )&lt;br&gt;                .addFilterBefore(&lt;span style=&quot;color:#c77dbb;&quot;&gt;jwtAuthenticationFilter&lt;/span&gt;,&lt;br&gt;                        UsernamePasswordAuthenticationFilter.&lt;span style=&quot;color:#cf8e6d;&quot;&gt;class&lt;/span&gt;);&lt;br&gt;&lt;br&gt;        &lt;span style=&quot;color:#cf8e6d;&quot;&gt;return &lt;/span&gt;http.build();&lt;br&gt;    &lt;/pre&gt;&lt;/div&gt;" id="Cnk5cM3cdncBtJATx8vk-2">
+          <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+            <mxGeometry height="320" width="560" x="90" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-4" edge="1" parent="1" source="Cnk5cM3cdncBtJATx8vk-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Cnk5cM3cdncBtJATx8vk-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Client&lt;br&gt; ↓&lt;br&gt;Tomcat Server&lt;br&gt; ↓&lt;br&gt;Spring DispatcherServlet&lt;br&gt; ↓&lt;br&gt;Spring Security Filter Chain&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="200" width="190" x="-140" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="my configured JWT authentication filter runs before other authentification filters becuase I have registered here" vertex="1">
+          <mxGeometry height="100" width="200" x="-60" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-6" edge="1" parent="1" source="Cnk5cM3cdncBtJATx8vk-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.518;entryY=0.688;entryDx=0;entryDy=0;entryPerimeter=0;textShadow=0;" target="Cnk5cM3cdncBtJATx8vk-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="SecurityFilterChain&lt;br&gt;   ↓&lt;br&gt;JwtAuthenticationFilter&lt;br&gt;   ↓&lt;br&gt;UsernamePasswordAuthenticationFilter" vertex="1">
+          <mxGeometry height="90" width="210" x="-240" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-9" edge="1" parent="1" source="Cnk5cM3cdncBtJATx8vk-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.004;entryY=0.612;entryDx=0;entryDy=0;entryPerimeter=0;" target="Cnk5cM3cdncBtJATx8vk-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-260" y="275" />
+              <mxPoint x="-260" y="381" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-10" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color:#1e1f22;color:#bcbec4&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#b3ae60;&quot;&gt;@Override&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#cf8e6d;&quot;&gt;protected void &lt;/span&gt;&lt;span style=&quot;color:#56a8f5;&quot;&gt;doFilterInternal&lt;/span&gt;(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) &lt;span style=&quot;color:#cf8e6d;&quot;&gt;throws &lt;/span&gt;ServletException, IOException {&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;final &lt;/span&gt;String authHeader = request.getHeader(&lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;Authorization&quot;&lt;/span&gt;);&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;if &lt;/span&gt;(authHeader == &lt;span style=&quot;color:#cf8e6d;&quot;&gt;null &lt;/span&gt;|| !authHeader.startsWith(&lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;Bearer &quot;&lt;/span&gt;)) {&lt;br&gt;        filterChain.doFilter(request, response);&lt;br&gt;        &lt;span style=&quot;color:#cf8e6d;&quot;&gt;return&lt;/span&gt;;&lt;br&gt;    }&lt;br&gt;&lt;br&gt;    String token = authHeader.substring(&lt;span style=&quot;color:#2aacb8;&quot;&gt;7&lt;/span&gt;);&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;if &lt;/span&gt;(&lt;span style=&quot;color:#c77dbb;&quot;&gt;jwtService&lt;/span&gt;.isTokenValid(token)) {&lt;br&gt;&lt;br&gt;        &lt;span style=&quot;color:#cf8e6d;&quot;&gt;if &lt;/span&gt;(!&lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;access&quot;&lt;/span&gt;.equals(&lt;span style=&quot;color:#c77dbb;&quot;&gt;jwtService&lt;/span&gt;.extractTokenType(token))) {&lt;br&gt;            filterChain.doFilter(request, response);&lt;br&gt;            &lt;span style=&quot;color:#cf8e6d;&quot;&gt;return&lt;/span&gt;;&lt;br&gt;        }&lt;br&gt;&lt;br&gt;        String userId = &lt;span style=&quot;color:#c77dbb;&quot;&gt;jwtService&lt;/span&gt;.extractSubject(token);&lt;br&gt;&lt;br&gt;        UsernamePasswordAuthenticationToken authentication = &lt;span style=&quot;color:#cf8e6d;&quot;&gt;new &lt;/span&gt;UsernamePasswordAuthenticationToken(userId, &lt;span style=&quot;color:#cf8e6d;&quot;&gt;null&lt;/span&gt;, Collections.&lt;span style=&quot;font-style:italic;&quot;&gt;emptyList&lt;/span&gt;());&lt;br&gt;&lt;br&gt;        SecurityContextHolder.&lt;span style=&quot;font-style:italic;&quot;&gt;getContext&lt;/span&gt;().setAuthentication(authentication);&lt;br&gt;    }&lt;br&gt;    filterChain.doFilter(request, response);&lt;br&gt;}&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="460" width="1120" x="1040" y="-290" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-11" edge="1" parent="1" source="Cnk5cM3cdncBtJATx8vk-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.333;entryY=-0.002;entryDx=0;entryDy=0;entryPerimeter=0;" target="Cnk5cM3cdncBtJATx8vk-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Trying to extract the header&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="60" x="940" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-13" edge="1" parent="1" style="edgeStyle=entityRelationEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1000" y="15" as="sourcePoint" />
+            <mxPoint x="1070" y="-230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="We remove the prefix so that we can get the raw jwt" vertex="1">
+          <mxGeometry height="80" width="80" x="900" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-16" edge="1" parent="1" source="Cnk5cM3cdncBtJATx8vk-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.018;entryY=0.37;entryDx=0;entryDy=0;entryPerimeter=0;" target="Cnk5cM3cdncBtJATx8vk-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-17" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="checking the token is verified or not methods are already defined in authService" vertex="1">
+          <mxGeometry height="90" width="120" x="990" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-18" edge="1" parent="1" source="Cnk5cM3cdncBtJATx8vk-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.027;entryY=0.435;entryDx=0;entryDy=0;entryPerimeter=0;" target="Cnk5cM3cdncBtJATx8vk-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Checking which type of token it is access or refresh now here I know which user sent the request" vertex="1">
+          <mxGeometry height="120" width="90" x="1160" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-20" edge="1" parent="1" source="Cnk5cM3cdncBtJATx8vk-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.357;entryY=0.522;entryDx=0;entryDy=0;entryPerimeter=0;" target="Cnk5cM3cdncBtJATx8vk-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;labelBorderColor=default;fontColor=light-dark(default, #931515);fontStyle=0;labelBackgroundColor=default;" value="extracting the userID from the token" vertex="1">
+          <mxGeometry height="20" width="310" x="1400" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-26" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;labelBackgroundColor=default;" value="Here it becomes the logged in user" vertex="1">
+          <mxGeometry height="80" width="70" x="2055" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-31" edge="1" parent="1" source="Cnk5cM3cdncBtJATx8vk-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" target="Cnk5cM3cdncBtJATx8vk-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-28" parent="1" style="text;whiteSpace=wrap;html=1;labelBackgroundColor=default;" value="&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;This &lt;/span&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;stores &lt;/span&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;the &lt;/span&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;user &lt;/span&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;inside &lt;/span&gt;&lt;strong data-start=&quot;3895&quot; data-end=&quot;3928&quot;&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;thread-&lt;/span&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;local &lt;/span&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;security &lt;/span&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;context&lt;/span&gt;&lt;/strong&gt;&lt;span class=&quot;BZ_Pyq_fadeIn&quot;&gt;.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="40" width="340" x="1600" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="Cnk5cM3cdncBtJATx8vk-29" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;span&gt;Request Thread&lt;/span&gt;&lt;br&gt;&lt;span&gt;   ↓&lt;/span&gt;&lt;br&gt;&lt;span&gt;SecurityContext&lt;/span&gt;&lt;br&gt;&lt;span&gt;   ↓&lt;/span&gt;&lt;br&gt;&lt;span&gt;Authenticated User&lt;/span&gt;" vertex="1">
+          <mxGeometry height="100" width="210" x="1710" y="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
