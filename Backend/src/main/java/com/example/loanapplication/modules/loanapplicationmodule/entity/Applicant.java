@@ -1,4 +1,35 @@
 package com.example.loanapplication.modules.loanapplicationmodule.entity;
 
+import com.example.loanapplication.modules.loanapplicationmodule.enums.ApplicantType;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name ="applicant")
 public class Applicant {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID applicantId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "loan_application_id")
+    private LoanApplication loanApplication;
+
+    private String name;
+    private String panNumber;
+    private String address;
+
+    @Enumerated(EnumType.STRING)
+    private ApplicantType applicantType;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void onCreate(){
+        this.createdAt = LocalDateTime.now();
+    }
+
 }

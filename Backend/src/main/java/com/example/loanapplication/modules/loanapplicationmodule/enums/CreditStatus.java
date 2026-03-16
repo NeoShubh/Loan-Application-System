@@ -1,6 +1,4 @@
 package com.example.loanapplication.modules.loanapplicationmodule.enums;
 
-public enum ApplicantType {
-    PRIMARY,
-    SECONDARY
+public enum CreditStatus {
 }

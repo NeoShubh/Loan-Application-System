@@ -1,4 +1,63 @@
 package com.example.loanapplication.modules.loanapplicationmodule.entity;
 
+import com.example.loanapplication.modules.loanapplicationmodule.enums.CreditStatus;
+import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanStage;
+import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanType;
+import com.example.loanapplication.modules.loanapplicationmodule.enums.RCUStatus;
+import com.example.loanapplication.modules.usermodule.entity.User;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Lazy;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "loan_application")
 public class LoanApplication {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID loanID;
+
+    @Enumerated(EnumType.STRING)
+    private LoanType loanType;
+
+    @Enumerated(EnumType.STRING)
+    private LoanStage loanStage;
+
+    @Enumerated(EnumType.STRING)
+    private RCUStatus rcuStatus;
+
+    @Enumerated(EnumType.STRING)
+    private CreditStatus creditStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")  // point being hibernate will find out the user ID from the User So for FK point of view you should give the entity type and
+    private User createdBy;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }
