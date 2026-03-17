@@ -1,4 +1,11 @@
 package com.example.loanapplication.modules.loanapplicationmodule.repository;
 
-public class LoanStageHistoryRepository {
+import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanStageHistory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+@Repository
+public interface LoanStageHistoryRepository extends JpaRepository<LoanStageHistory, UUID> {
 }
