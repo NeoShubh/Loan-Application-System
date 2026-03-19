@@ -21,16 +21,16 @@ import java.util.UUID;
 public class LoanApplicationRequestDTO {
 
     @NotNull(message = "Loan type can not be null")
-    private LoanType loanType;
+    private String loanType;
 
     @NotNull(message = "Loan stage can not be null")
-    private LoanStage loanStage;
+    private String loanStage;
 
     @NotNull(message = "RCU status can not be null")
-    private RCUStatus rcuStatus;
+    private String rcuStatus;
 
     @NotNull(message = "credit status can not be null")
-    private CreditStatus creditStatus;
+    private String creditStatus;
 
     @NotNull(message = "creator can not be null")
     private String createdBy;

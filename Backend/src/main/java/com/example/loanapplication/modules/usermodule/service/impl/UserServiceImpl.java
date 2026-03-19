@@ -70,4 +70,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByuserID(userID).orElseThrow(()-> new UserNotFoundException("User Not Found"));
         userRepository.delete(user);
     }
+
+    @Override
+    public boolean isUserAvailable(UUID userID) {
+        return userRepository.existsByUserID(userID);
+    }
 }

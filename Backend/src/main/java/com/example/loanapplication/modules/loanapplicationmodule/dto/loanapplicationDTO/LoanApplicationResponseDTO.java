@@ -21,18 +21,11 @@ import java.util.UUID;
 public class LoanApplicationResponseDTO {
 
     private UUID loanID;
-
     private LoanType loanType;
-
     private LoanStage loanStage;
-
     private RCUStatus rcuStatus;
-
     private CreditStatus creditStatus;
-
     private UUID createdBy;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 }

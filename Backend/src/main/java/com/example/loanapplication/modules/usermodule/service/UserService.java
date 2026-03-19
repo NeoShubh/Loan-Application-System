@@ -13,4 +13,5 @@ public interface UserService {
     UserResponseDTO updateUser(UUID userID, UserRequestDTO userRequestDTO);
     void deleteUserByEmailID(String emailID);
     void deleteUserByUserID(UUID userID);
+    boolean isUserAvailable(UUID userID);
 }
