@@ -14,7 +14,7 @@ public interface LoanApplicationService {
    LoanApplicationResponseDTO createLoanApplication(LoanApplicationRequestDTO loanApplicationRequestDTO);
    List<LoanApplicationResponseDTO> getAllLoanApplicationByUserID(String userId);
    LoanApplicationResponseDTO getLoanApplicationById(String loanId);
-   LoanApplicationResponseDTO updateLoanApplication(LoanApplicationRequestDTO loanApplicationRequestDTO);
+   LoanApplicationResponseDTO updateLoanApplication(String loanID,LoanApplicationRequestDTO loanApplicationRequestDTO);
    void deleteLoanApplication(String loanId);
    //Loan Application History methods
     LoanStageHistoryResponseDTO createLoanStageHistory(LoanStageHistoryRequestDTO loanStageHistoryRequestDTO);

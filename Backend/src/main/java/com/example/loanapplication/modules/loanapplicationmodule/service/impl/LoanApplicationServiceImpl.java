@@ -1,5 +1,6 @@
 package com.example.loanapplication.modules.loanapplicationmodule.service.impl;
 
+import com.example.loanapplication.exception.user.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.user.UserNotFoundException;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryRequestDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryResponseDTO;
@@ -47,6 +48,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .creditStatus(CreditStatus.valueOf(loanApplicationRequestDTO.getCreditStatus()))
                 .createdBy(user).build();
 
+        // Loan Stage history code will be due here
+
         loanApplicationRepository.save(loanApplication);
 
         return LoanApplicationResponseDTO.builder()
@@ -87,17 +90,63 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Override
     public LoanApplicationResponseDTO getLoanApplicationById(String loanId) {
-        return null;
+        LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanId)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not found"));
+        return LoanApplicationResponseDTO.builder()
+                .loanID(loanApplication.getLoanID())
+                .loanType(loanApplication.getLoanType())
+                .loanStage(loanApplication.getLoanStage())
+                .rcuStatus(loanApplication.getRcuStatus())
+                .creditStatus(loanApplication.getCreditStatus())
+                .createdBy(loanApplication.getCreatedBy().getUserID())
+                .createdAt(loanApplication.getCreatedAt())
+                .updatedAt(loanApplication.getUpdatedAt()).build();
     }
 
     @Override
-    public LoanApplicationResponseDTO updateLoanApplication(LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        return null;
+    public LoanApplicationResponseDTO updateLoanApplication(String loanID,LoanApplicationRequestDTO loanApplicationRequestDTO) {
+        LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanID)).orElseThrow(()-> new LoanApplicationNotFoundException("Loan Application Not Found"));
+
+        if(loanApplicationRequestDTO.getLoanType()!=null){
+            loanApplication.setLoanType(LoanType.valueOf(loanApplicationRequestDTO.getLoanType()));
+        }
+
+        if(loanApplicationRequestDTO.getLoanStage() != null){
+            // Loan Stage history code will be due here As the stage changes new history should be created by this change
+            loanApplication.setLoanStage(LoanStage.valueOf(loanApplicationRequestDTO.getLoanStage()));
+        }
+
+        if(loanApplicationRequestDTO.getRcuStatus() != null){
+            loanApplication.setRcuStatus(RCUStatus.valueOf(loanApplicationRequestDTO.getRcuStatus()));
+        }
+
+        if(loanApplicationRequestDTO.getCreditStatus() != null){
+            loanApplication.setCreditStatus(CreditStatus.valueOf(loanApplicationRequestDTO.getCreditStatus()));
+        }
+
+        if(loanApplicationRequestDTO.getCreatedBy() != null){
+            User user = User.builder().userID(UUID.fromString(loanApplicationRequestDTO.getCreatedBy())).build();
+            loanApplication.setCreatedBy(user);
+        }
+
+        loanApplicationRepository.save(loanApplication);
+
+        return LoanApplicationResponseDTO.builder()
+                .loanID(loanApplication.getLoanID())
+                .loanType(loanApplication.getLoanType())
+                .loanStage(loanApplication.getLoanStage())
+                .rcuStatus(loanApplication.getRcuStatus())
+                .creditStatus(loanApplication.getCreditStatus())
+                .createdBy(loanApplication.getCreatedBy().getUserID())
+                .createdAt(loanApplication.getCreatedAt())
+                .updatedAt(loanApplication.getUpdatedAt())
+                .build();
     }
 
     @Override
     public void deleteLoanApplication(String loanId) {
-
+        LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanId)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not found"));
+        //while deleting the loan application its history, documents and applicant should be deleted
+        loanApplicationRepository.deleteById(loanApplication.getLoanID());
     }
 
     @Override
