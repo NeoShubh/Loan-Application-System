@@ -1,4 +1,4 @@
-package com.example.loanapplication.exception.user;
+package com.example.loanapplication.exception.loanapplication;
 
 public class LoanApplicationNotFoundException extends RuntimeException{
     public LoanApplicationNotFoundException(String msg){

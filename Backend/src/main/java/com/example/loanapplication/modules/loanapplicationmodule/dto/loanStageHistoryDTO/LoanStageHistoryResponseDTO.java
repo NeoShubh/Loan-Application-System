@@ -19,14 +19,9 @@ import java.util.UUID;
 public class LoanStageHistoryResponseDTO {
 
     private UUID loanStageHistoryId;
-
     private UUID loanApplicationId;
-
     private LoanStage oldStage;
-
     private LoanStage currentStage;
-
     private UUID changedBy;
-
     private LocalDateTime changedAt;
 }

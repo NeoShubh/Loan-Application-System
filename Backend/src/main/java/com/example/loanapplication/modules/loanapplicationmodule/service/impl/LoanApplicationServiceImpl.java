@@ -1,12 +1,14 @@
 package com.example.loanapplication.modules.loanapplicationmodule.service.impl;
 
-import com.example.loanapplication.exception.user.LoanApplicationNotFoundException;
+import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
+import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
 import com.example.loanapplication.exception.user.UserNotFoundException;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryRequestDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryResponseDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplicationDTO.LoanApplicationRequestDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplicationDTO.LoanApplicationResponseDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanApplication;
+import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanStageHistory;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.CreditStatus;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanStage;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanType;
@@ -48,9 +50,18 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .creditStatus(CreditStatus.valueOf(loanApplicationRequestDTO.getCreditStatus()))
                 .createdBy(user).build();
 
-        // Loan Stage history code will be due here
-
         loanApplicationRepository.save(loanApplication);
+
+        // Loan Stage History Creation
+        LoanStageHistoryRequestDTO loanStageHistoryRequestDTO = LoanStageHistoryRequestDTO.builder()
+                .loanApplicationId(String.valueOf(loanApplication.getLoanID()))
+                .changedBy(String.valueOf(user.getUserID()))
+                .oldStage(LoanStage.NOT_INITIATED)
+                .currentStage(loanApplication.getLoanStage()).build();
+
+        LoanStageHistoryResponseDTO loanStageHistoryResponseDTO =
+                createLoanStageHistory(String.valueOf(loanApplication.getLoanID()), String.valueOf(user.getUserID()), loanStageHistoryRequestDTO);
+
 
         return LoanApplicationResponseDTO.builder()
                 .loanID(loanApplication.getLoanID())
@@ -103,28 +114,37 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
-    public LoanApplicationResponseDTO updateLoanApplication(String loanID,LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanID)).orElseThrow(()-> new LoanApplicationNotFoundException("Loan Application Not Found"));
-
-        if(loanApplicationRequestDTO.getLoanType()!=null){
+    public LoanApplicationResponseDTO updateLoanApplication(String loanID, LoanApplicationRequestDTO loanApplicationRequestDTO) {
+        LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanID)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not Found"));
+        User user = User.builder().userID(UUID.fromString(loanApplicationRequestDTO.getCreatedBy())).build();
+        if (loanApplicationRequestDTO.getLoanType() != null) {
             loanApplication.setLoanType(LoanType.valueOf(loanApplicationRequestDTO.getLoanType()));
         }
 
-        if(loanApplicationRequestDTO.getLoanStage() != null){
-            // Loan Stage history code will be due here As the stage changes new history should be created by this change
+        if (loanApplicationRequestDTO.getLoanStage() != null) {
             loanApplication.setLoanStage(LoanStage.valueOf(loanApplicationRequestDTO.getLoanStage()));
+            //Loan Stage history creation
+            LoanStageHistoryRequestDTO loanStageHistoryRequestDTO = LoanStageHistoryRequestDTO.builder()
+                    .loanApplicationId(String.valueOf(loanApplication.getLoanID()))
+                    .changedBy(String.valueOf(user.getUserID()))
+                    .oldStage(loanApplication.getLoanStage())
+                    .currentStage(LoanStage.valueOf(loanApplicationRequestDTO.getLoanStage())).build();
+
+            LoanStageHistoryResponseDTO loanStageHistoryResponseDTO =
+                    createLoanStageHistory(String.valueOf(loanApplication.getLoanID()), String.valueOf(user.getUserID()), loanStageHistoryRequestDTO);
+
         }
 
-        if(loanApplicationRequestDTO.getRcuStatus() != null){
+        if (loanApplicationRequestDTO.getRcuStatus() != null) {
             loanApplication.setRcuStatus(RCUStatus.valueOf(loanApplicationRequestDTO.getRcuStatus()));
         }
 
-        if(loanApplicationRequestDTO.getCreditStatus() != null){
+        if (loanApplicationRequestDTO.getCreditStatus() != null) {
             loanApplication.setCreditStatus(CreditStatus.valueOf(loanApplicationRequestDTO.getCreditStatus()));
         }
 
-        if(loanApplicationRequestDTO.getCreatedBy() != null){
-            User user = User.builder().userID(UUID.fromString(loanApplicationRequestDTO.getCreatedBy())).build();
+        if (loanApplicationRequestDTO.getCreatedBy() != null) {
+//            User user = User.builder().userID(UUID.fromString(loanApplicationRequestDTO.getCreatedBy())).build();
             loanApplication.setCreatedBy(user);
         }
 
@@ -150,32 +170,128 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
-    public LoanStageHistoryResponseDTO createLoanStageHistory(LoanStageHistoryRequestDTO loanStageHistoryRequestDTO) {
-        return null;
+    public boolean isLoanApplicationExists(String loanID) {
+        return loanApplicationRepository.existsByLoanID(UUID.fromString(loanID));
     }
 
     @Override
-    public List<LoanStageHistoryResponseDTO> getAllLoanStageHistoryByLoanId(String LoanId) {
-        return List.of();
+    public LoanStageHistoryResponseDTO createLoanStageHistory(String loanApplicationID, String userID, LoanStageHistoryRequestDTO loanStageHistoryRequestDTO) {
+
+        LoanStageHistory loanStageHistory = new LoanStageHistory();
+
+        if (isLoanApplicationExists(loanApplicationID)) {
+
+            LoanApplication loanApplication = LoanApplication.builder().loanID(UUID.fromString(loanApplicationID)).build();
+            User user = User.builder().userID(UUID.fromString(userID)).build();
+
+            loanStageHistory.setLoanApplicationId(loanApplication);
+            loanStageHistory.setChangedBy(user);
+            loanStageHistory.setOldStage(loanStageHistoryRequestDTO.getOldStage());
+            loanStageHistory.setCurrentStage(loanStageHistoryRequestDTO.getCurrentStage());
+
+            loanStageHistoryRepository.save(loanStageHistory);
+
+        } else {
+            throw new LoanApplicationNotFoundException("Loan Application is not found.");
+        }
+
+        return LoanStageHistoryResponseDTO.builder()
+                .loanStageHistoryId(loanStageHistory.getLoanStageHistoryId())
+                .loanApplicationId(loanStageHistory.getLoanApplicationId().getLoanID())
+                .oldStage(loanStageHistory.getOldStage())
+                .currentStage(loanStageHistory.getCurrentStage())
+                .changedAt(loanStageHistory.getChangedAt())
+                .changedBy(loanStageHistory.getChangedBy().getUserID()).build();
+
+    }
+
+    @Override
+    public List<LoanStageHistoryResponseDTO> getAllLoanStageHistoryByLoanId(String loanId) {
+        List<LoanStageHistory> loanStageHistories = loanStageHistoryRepository.findByLoanApplicationLoanApplicationID(UUID.fromString(loanId));
+        List<LoanStageHistoryResponseDTO> loanStageHistorylist = new ArrayList<>();
+
+        for (int i = 0; i < loanStageHistories.size(); i++) {
+            LoanStageHistoryResponseDTO singleLoanStageHistoryResponseDTO = LoanStageHistoryResponseDTO.builder()
+                    .loanStageHistoryId(loanStageHistories.get(i).getLoanStageHistoryId())
+                    .loanApplicationId(loanStageHistories.get(i).getLoanApplicationId().getLoanID())
+                    .oldStage(loanStageHistories.get(i).getOldStage())
+                    .currentStage(loanStageHistories.get(i).getCurrentStage())
+                    .changedAt(loanStageHistories.get(i).getChangedAt())
+                    .changedBy(loanStageHistories.get(i).getChangedBy().getUserID()).build();
+            loanStageHistorylist.add(singleLoanStageHistoryResponseDTO);
+        }
+
+        return loanStageHistorylist;
     }
 
     @Override
     public LoanStageHistoryResponseDTO getLoanStageHistoryById(String loanStageHistoryId) {
-        return null;
+
+        LoanStageHistory loanstageHistory = loanStageHistoryRepository.findById(UUID.fromString(loanStageHistoryId)).orElseThrow(() -> new LoanStageHistoryNotFoundException("Loan Stage History Not Found."));
+
+        return LoanStageHistoryResponseDTO.builder()
+                .loanStageHistoryId(loanstageHistory.getLoanStageHistoryId())
+                .loanApplicationId(loanstageHistory.getLoanApplicationId().getLoanID())
+                .oldStage(loanstageHistory.getOldStage())
+                .currentStage(loanstageHistory.getCurrentStage())
+                .changedAt(loanstageHistory.getChangedAt())
+                .changedBy(loanstageHistory.getChangedBy().getUserID()).build();
     }
 
     @Override
     public void deleteLoanStageHistoryById(String loanStageHistoryId) {
-
+        LoanStageHistory loanstageHistory = loanStageHistoryRepository.findById(UUID.fromString(loanStageHistoryId)).orElseThrow(() -> new LoanStageHistoryNotFoundException("Loan Stage History Not Found."));
+        loanStageHistoryRepository.delete(loanstageHistory);
     }
 
     @Override
     public void deleteAllLoanStageHistoryByLoanId(String LoanId) {
+        long count = loanStageHistoryRepository.deleteAllByLoanApplicationLoanApplicationID(UUID.fromString(LoanId));
 
+        if (count == 0) {
+            throw new LoanStageHistoryNotFoundException("No history found to delete");
+        }
     }
 
     @Override
-    public LoanStageHistoryResponseDTO updateLoanStageHistory(String loanStageHistoryId) {
-        return null;
+    public LoanStageHistoryResponseDTO updateLoanStageHistory(String loanStageHistoryId, LoanStageHistoryRequestDTO loanStageHistoryRequestDTO) {
+       
+        //check loan stage history exists or not
+        LoanStageHistory loanstageHistory = loanStageHistoryRepository.findById(UUID.fromString(loanStageHistoryId)).orElseThrow(() -> new LoanStageHistoryNotFoundException("Loan Stage History Not Found."));
+        
+        // checking loan application exists or not
+        if(isLoanApplicationExists(loanStageHistoryRequestDTO.getLoanApplicationId())) {
+
+            //setting the new loan application ID
+            if (loanStageHistoryRequestDTO.getLoanApplicationId() != null) {
+                LoanApplication loanApplication = LoanApplication.builder().loanID(UUID.fromString(loanStageHistoryRequestDTO.getLoanApplicationId())).build();
+                loanstageHistory.setLoanApplicationId(loanApplication);
+            }
+            
+            //setting the new current stage
+            if(loanStageHistoryRequestDTO.getCurrentStage() != null){
+                loanstageHistory.setCurrentStage(loanStageHistoryRequestDTO.getCurrentStage());
+            }
+            
+            //setting the old current stage
+            if(loanStageHistoryRequestDTO.getOldStage() != null){
+                loanstageHistory.setOldStage(loanStageHistoryRequestDTO.getOldStage());
+            }
+            
+            //setting the new user or changed by field
+            if(loanStageHistoryRequestDTO.getChangedBy() != null){
+                User user = User.builder().userID(UUID.fromString(loanStageHistoryRequestDTO.getChangedBy())).build();
+                loanstageHistory.setChangedBy(user);
+            }
+
+        }
+        loanStageHistoryRepository.save(loanstageHistory);
+        return LoanStageHistoryResponseDTO.builder()
+                 .loanStageHistoryId(loanstageHistory.getLoanStageHistoryId())
+                .loanApplicationId(loanstageHistory.getLoanApplicationId().getLoanID())
+                .oldStage(loanstageHistory.getOldStage())
+                .currentStage(loanstageHistory.getCurrentStage())
+                .changedAt(loanstageHistory.getChangedAt())
+                .changedBy(loanstageHistory.getChangedBy().getUserID()).build();
     }
 }

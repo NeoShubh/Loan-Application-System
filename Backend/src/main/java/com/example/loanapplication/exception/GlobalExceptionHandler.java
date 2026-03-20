@@ -1,7 +1,8 @@
 package com.example.loanapplication.exception;
 
+import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
 import com.example.loanapplication.exception.user.InvalidCredentialsException;
-import com.example.loanapplication.exception.user.LoanApplicationNotFoundException;
+import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.user.UserAlreadyExistsException;
 import com.example.loanapplication.exception.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiError> handleUserNotFoundException(UserNotFoundException ex){
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
+    }
+
+    @ExceptionHandler(LoanStageHistoryNotFoundException.class)
+    public ResponseEntity<ApiError> HandleloanStageHistoryNotFoundException(LoanStageHistoryNotFoundException ex){
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
     }

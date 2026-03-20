@@ -16,8 +16,9 @@ public interface LoanApplicationService {
    LoanApplicationResponseDTO getLoanApplicationById(String loanId);
    LoanApplicationResponseDTO updateLoanApplication(String loanID,LoanApplicationRequestDTO loanApplicationRequestDTO);
    void deleteLoanApplication(String loanId);
+   boolean isLoanApplicationExists(String loanID);
    //Loan Application History methods
-    LoanStageHistoryResponseDTO createLoanStageHistory(LoanStageHistoryRequestDTO loanStageHistoryRequestDTO);
+    LoanStageHistoryResponseDTO createLoanStageHistory(String loanApplicationID,String userID,LoanStageHistoryRequestDTO loanStageHistoryRequestDTO);
     List<LoanStageHistoryResponseDTO> getAllLoanStageHistoryByLoanId(String LoanId);
     LoanStageHistoryResponseDTO getLoanStageHistoryById(String loanStageHistoryId);
     void deleteLoanStageHistoryById(String loanStageHistoryId);
