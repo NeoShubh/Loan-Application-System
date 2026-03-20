@@ -25,7 +25,7 @@ public class LoanStageHistory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "loan_Application_id")
-    private LoanApplication loanApplicationId; //loan application can have more than one history So to track it we will have this relationship as many to one
+    private LoanApplication loanApplication; //loan application can have more than one history So to track it we will have this relationship as many to one
 
     @Enumerated(EnumType.STRING)
     @Column(name = "old_stage")

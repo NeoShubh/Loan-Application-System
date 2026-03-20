@@ -167,6 +167,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanId)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not found"));
         //while deleting the loan application its history, documents and applicant should be deleted
         loanApplicationRepository.deleteById(loanApplication.getLoanID());
+        deleteAllLoanStageHistoryByLoanId(loanId);
     }
 
     @Override
@@ -184,7 +185,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             LoanApplication loanApplication = LoanApplication.builder().loanID(UUID.fromString(loanApplicationID)).build();
             User user = User.builder().userID(UUID.fromString(userID)).build();
 
-            loanStageHistory.setLoanApplicationId(loanApplication);
+            loanStageHistory.setLoanApplication(loanApplication);
             loanStageHistory.setChangedBy(user);
             loanStageHistory.setOldStage(loanStageHistoryRequestDTO.getOldStage());
             loanStageHistory.setCurrentStage(loanStageHistoryRequestDTO.getCurrentStage());
@@ -197,7 +198,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         return LoanStageHistoryResponseDTO.builder()
                 .loanStageHistoryId(loanStageHistory.getLoanStageHistoryId())
-                .loanApplicationId(loanStageHistory.getLoanApplicationId().getLoanID())
+                .loanApplicationId(loanStageHistory.getLoanApplication().getLoanID())
                 .oldStage(loanStageHistory.getOldStage())
                 .currentStage(loanStageHistory.getCurrentStage())
                 .changedAt(loanStageHistory.getChangedAt())
@@ -207,13 +208,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Override
     public List<LoanStageHistoryResponseDTO> getAllLoanStageHistoryByLoanId(String loanId) {
-        List<LoanStageHistory> loanStageHistories = loanStageHistoryRepository.findByLoanApplicationLoanApplicationID(UUID.fromString(loanId));
+        List<LoanStageHistory> loanStageHistories = loanStageHistoryRepository.findByLoanApplicationLoanID(UUID.fromString(loanId));
         List<LoanStageHistoryResponseDTO> loanStageHistorylist = new ArrayList<>();
 
         for (int i = 0; i < loanStageHistories.size(); i++) {
             LoanStageHistoryResponseDTO singleLoanStageHistoryResponseDTO = LoanStageHistoryResponseDTO.builder()
                     .loanStageHistoryId(loanStageHistories.get(i).getLoanStageHistoryId())
-                    .loanApplicationId(loanStageHistories.get(i).getLoanApplicationId().getLoanID())
+                    .loanApplicationId(loanStageHistories.get(i).getLoanApplication().getLoanID())
                     .oldStage(loanStageHistories.get(i).getOldStage())
                     .currentStage(loanStageHistories.get(i).getCurrentStage())
                     .changedAt(loanStageHistories.get(i).getChangedAt())
@@ -231,7 +232,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         return LoanStageHistoryResponseDTO.builder()
                 .loanStageHistoryId(loanstageHistory.getLoanStageHistoryId())
-                .loanApplicationId(loanstageHistory.getLoanApplicationId().getLoanID())
+                .loanApplicationId(loanstageHistory.getLoanApplication().getLoanID())
                 .oldStage(loanstageHistory.getOldStage())
                 .currentStage(loanstageHistory.getCurrentStage())
                 .changedAt(loanstageHistory.getChangedAt())
@@ -246,7 +247,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Override
     public void deleteAllLoanStageHistoryByLoanId(String LoanId) {
-        long count = loanStageHistoryRepository.deleteAllByLoanApplicationLoanApplicationID(UUID.fromString(LoanId));
+        long count = loanStageHistoryRepository.deleteAllByLoanApplicationLoanID(UUID.fromString(LoanId));
 
         if (count == 0) {
             throw new LoanStageHistoryNotFoundException("No history found to delete");
@@ -265,7 +266,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             //setting the new loan application ID
             if (loanStageHistoryRequestDTO.getLoanApplicationId() != null) {
                 LoanApplication loanApplication = LoanApplication.builder().loanID(UUID.fromString(loanStageHistoryRequestDTO.getLoanApplicationId())).build();
-                loanstageHistory.setLoanApplicationId(loanApplication);
+                loanstageHistory.setLoanApplication(loanApplication);
             }
             
             //setting the new current stage
@@ -285,10 +286,11 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             }
 
         }
+        //saving the changes
         loanStageHistoryRepository.save(loanstageHistory);
         return LoanStageHistoryResponseDTO.builder()
                  .loanStageHistoryId(loanstageHistory.getLoanStageHistoryId())
-                .loanApplicationId(loanstageHistory.getLoanApplicationId().getLoanID())
+                .loanApplicationId(loanstageHistory.getLoanApplication().getLoanID())
                 .oldStage(loanstageHistory.getOldStage())
                 .currentStage(loanstageHistory.getCurrentStage())
                 .changedAt(loanstageHistory.getChangedAt())

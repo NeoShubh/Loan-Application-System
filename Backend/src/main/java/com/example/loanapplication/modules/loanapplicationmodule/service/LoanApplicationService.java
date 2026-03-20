@@ -23,6 +23,6 @@ public interface LoanApplicationService {
     LoanStageHistoryResponseDTO getLoanStageHistoryById(String loanStageHistoryId);
     void deleteLoanStageHistoryById(String loanStageHistoryId);
     void deleteAllLoanStageHistoryByLoanId(String LoanId);
-    LoanStageHistoryResponseDTO updateLoanStageHistory(String loanStageHistoryId);
+    LoanStageHistoryResponseDTO updateLoanStageHistory(String loanStageHistoryId,LoanStageHistoryRequestDTO loanStageHistoryRequestDTO);
 
 }

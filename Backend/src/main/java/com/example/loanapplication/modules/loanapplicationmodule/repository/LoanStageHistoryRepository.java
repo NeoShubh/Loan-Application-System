@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface LoanStageHistoryRepository extends JpaRepository<LoanStageHistory, UUID> {
-    List<LoanStageHistory> findByLoanApplicationLoanApplicationID(UUID LoanApplicationID);
-    Long deleteAllByLoanApplicationLoanApplicationID(UUID LoanApplicationID);
+    List<LoanStageHistory> findByLoanApplicationLoanID(UUID loanID);
+    Long deleteAllByLoanApplicationLoanID(UUID loanID);
 }
