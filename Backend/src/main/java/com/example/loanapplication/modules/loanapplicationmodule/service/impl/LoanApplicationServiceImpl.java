@@ -15,6 +15,7 @@ import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanType;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.RCUStatus;
 import com.example.loanapplication.modules.loanapplicationmodule.repository.LoanApplicationRepository;
 import com.example.loanapplication.modules.loanapplicationmodule.repository.LoanStageHistoryRepository;
+import com.example.loanapplication.modules.loanapplicationmodule.service.ApplicantService;
 import com.example.loanapplication.modules.loanapplicationmodule.service.LoanApplicationService;
 import com.example.loanapplication.modules.usermodule.entity.User;
 import com.example.loanapplication.modules.usermodule.service.UserService;
@@ -30,12 +31,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private final LoanApplicationRepository loanApplicationRepository;
     private final LoanStageHistoryRepository loanStageHistoryRepository;
     private final UserService userService;
+    private final ApplicantService applicantService;
 
-
-    public LoanApplicationServiceImpl(LoanApplicationRepository loanApplicationRepository, LoanStageHistoryRepository loanStageHistoryRepository, UserService userService) {
+    public LoanApplicationServiceImpl(LoanApplicationRepository loanApplicationRepository, LoanStageHistoryRepository loanStageHistoryRepository, UserService userService, ApplicantService applicantService) {
         this.loanApplicationRepository = loanApplicationRepository;
         this.loanStageHistoryRepository = loanStageHistoryRepository;
         this.userService = userService;
+        this.applicantService = applicantService;
     }
 
     @Override
@@ -168,6 +170,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         //while deleting the loan application its history, documents and applicant should be deleted
         loanApplicationRepository.deleteById(loanApplication.getLoanID());
         deleteAllLoanStageHistoryByLoanId(loanId);
+        applicantService.deleteAllApplicantByLoanId(String.valueOf(loanApplication.getLoanID()));
     }
 
     @Override
@@ -175,6 +178,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
          return loanApplicationRepository.existsByLoanID(UUID.fromString(loanID));
     }
 
+    //LOAN STAGE HISTORY
     @Override
     public LoanStageHistoryResponseDTO createLoanStageHistory(String loanApplicationID, String userID, LoanStageHistoryRequestDTO loanStageHistoryRequestDTO) {
 

@@ -6,6 +6,7 @@ import com.example.loanapplication.modules.loanapplicationmodule.dto.applicantDT
 import com.example.loanapplication.modules.loanapplicationmodule.dto.applicantDTO.ApplicantResponseDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.entity.Applicant;
 import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanApplication;
+import com.example.loanapplication.modules.loanapplicationmodule.enums.ApplicantType;
 import com.example.loanapplication.modules.loanapplicationmodule.repository.ApplicantRepository;
 import com.example.loanapplication.modules.loanapplicationmodule.service.ApplicantService;
 import com.example.loanapplication.modules.loanapplicationmodule.service.LoanApplicationService;
@@ -98,7 +99,7 @@ public class ApplicantServiceImpl implements ApplicantService {
 
     @Override
     public void deleteAllApplicantByLoanId(String loanId) {
-        long count = applicantRepository.deleteAllByLoanApplicationloanID(UUID.fromString(loanId));
+        long count = applicantRepository.deleteAllByLoanApplicationLoanID(UUID.fromString(loanId));
         if(count < 0){
             throw new ApplicantNotFoundException("No Applicants found for this loan application");
         }
@@ -121,25 +122,44 @@ public class ApplicantServiceImpl implements ApplicantService {
     @Override
     public ApplicantResponseDTO getPrimaryApplicant(String loanId) {
 
-//        return ApplicantResponseDTO.builder()
-//                .applicantId(applicant.getApplicantId())
-//                .loanApplication(applicant.getLoanApplication().getLoanID())
-//                .name(applicant.getName())
-//                .panNumber(applicant.getPanNumber())
-//                .address(applicant.getAddress())
-//                .applicantType(applicant.getApplicantType())
-//                .createdAt(applicant.getCreatedAt()).build();
-        return null;
+
+        Applicant applicant = applicantRepository.findByLoanApplication_LoanIDAndApplicantType(UUID.fromString(loanId), ApplicantType.PRIMARY);
+        if(applicant==null){
+         throw new ApplicantNotFoundException("Primary Applicant Not Found.");
+        }
+
+        return ApplicantResponseDTO.builder()
+                .applicantId(applicant.getApplicantId())
+                .loanApplication(applicant.getLoanApplication().getLoanID())
+                .name(applicant.getName())
+                .panNumber(applicant.getPanNumber())
+                .address(applicant.getAddress())
+                .applicantType(applicant.getApplicantType())
+                .createdAt(applicant.getCreatedAt()).build();
     }
 
     @Override
     public List<ApplicantResponseDTO> getAllSecondaryApplicant(String loanId) {
-        return List.of();
+
+        List <Applicant> applicants = applicantRepository.findAllByLoanApplication_LoanIDAndApplicantType(UUID.fromString(loanId),ApplicantType.SECONDARY);
+        List <ApplicantResponseDTO> responseApplicants = new ArrayList<>();
+        for (int i = 0; i < applicants.size(); i++) {
+            ApplicantResponseDTO applicantResponseDTO = ApplicantResponseDTO.builder()
+                    .applicantId(applicants.get(i).getApplicantId())
+                    .loanApplication(applicants.get(i).getLoanApplication().getLoanID())
+                    .name(applicants.get(i).getName())
+                    .panNumber(applicants.get(i).getPanNumber())
+                    .address(applicants.get(i).getAddress())
+                    .applicantType(applicants.get(i).getApplicantType())
+                    .createdAt(applicants.get(i).getCreatedAt()).build();
+            responseApplicants.add(applicantResponseDTO);
+        }
+        return responseApplicants;
     }
 
     @Override
     public List<ApplicantResponseDTO> getAllApplicant(String loanId) {
-        List<Applicant> applicants = applicantRepository.findByLoanApplicationloanID(UUID.fromString(loanId));
+        List<Applicant> applicants = applicantRepository.findByLoanApplicationLoanID(UUID.fromString(loanId));
         List <ApplicantResponseDTO> responseApplicants = new ArrayList<>();
         for (int i = 0; i < applicants.size(); i++) {
            ApplicantResponseDTO applicantResponseDTO = ApplicantResponseDTO.builder()
