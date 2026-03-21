@@ -11,18 +11,29 @@ import java.util.List;
 public interface LoanApplicationService {
 
     //Loan Application methods
-   LoanApplicationResponseDTO createLoanApplication(LoanApplicationRequestDTO loanApplicationRequestDTO);
-   List<LoanApplicationResponseDTO> getAllLoanApplicationByUserID(String userId);
-   LoanApplicationResponseDTO getLoanApplicationById(String loanId);
-   LoanApplicationResponseDTO updateLoanApplication(String loanID,LoanApplicationRequestDTO loanApplicationRequestDTO);
-   void deleteLoanApplication(String loanId);
-   boolean isLoanApplicationExists(String loanID);
-   //Loan Application History methods
-    LoanStageHistoryResponseDTO createLoanStageHistory(String loanApplicationID,String userID,LoanStageHistoryRequestDTO loanStageHistoryRequestDTO);
+    LoanApplicationResponseDTO createLoanApplication(LoanApplicationRequestDTO loanApplicationRequestDTO);
+
+    List<LoanApplicationResponseDTO> getAllLoanApplicationByUserID(String userId);
+
+    LoanApplicationResponseDTO getLoanApplicationById(String loanId);
+
+    LoanApplicationResponseDTO updateLoanApplication(String loanID, LoanApplicationRequestDTO loanApplicationRequestDTO);
+
+    void deleteLoanApplication(String loanId);
+
+    boolean isLoanApplicationExists(String loanID);
+
+    //Loan Application History methods
+    LoanStageHistoryResponseDTO createLoanStageHistory(String loanApplicationID, String userID, LoanStageHistoryRequestDTO loanStageHistoryRequestDTO);
+
     List<LoanStageHistoryResponseDTO> getAllLoanStageHistoryByLoanId(String LoanId);
+
     LoanStageHistoryResponseDTO getLoanStageHistoryById(String loanStageHistoryId);
+
     void deleteLoanStageHistoryById(String loanStageHistoryId);
+
     void deleteAllLoanStageHistoryByLoanId(String LoanId);
-    LoanStageHistoryResponseDTO updateLoanStageHistory(String loanStageHistoryId,LoanStageHistoryRequestDTO loanStageHistoryRequestDTO);
+
+    LoanStageHistoryResponseDTO updateLoanStageHistory(String loanStageHistoryId, LoanStageHistoryRequestDTO loanStageHistoryRequestDTO);
 
 }
