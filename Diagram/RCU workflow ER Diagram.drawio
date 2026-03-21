@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.3">
   <diagram name="Page-1" id="MLGP9VZyXtnke5RlKYUX">
-    <mxGraphModel dx="2453" dy="958" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1797" dy="566" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -43,7 +43,21 @@
           <mxGeometry height="30" width="310" x="-340" y="1110" as="geometry" />
         </mxCell>
         <mxCell id="K5ep1uF1qaAUZufI2awd-7" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color:#1e1f22;color:#bcbec4&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#b3ae60;&quot;&gt;@Table&lt;/span&gt;(name =&lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;applicant&quot;&lt;/span&gt;)&lt;br&gt;&lt;span style=&quot;color:#cf8e6d;&quot;&gt;public class &lt;/span&gt;Applicant {&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@Id&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#b3ae60;&quot;&gt;    @GeneratedValue&lt;/span&gt;(strategy = GenerationType.&lt;span style=&quot;color:#c77dbb;font-style:italic;&quot;&gt;UUID&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;UUID &lt;span style=&quot;color:#c77dbb;&quot;&gt;applicantId&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@ManyToOne&lt;/span&gt;(fetch = FetchType.&lt;span style=&quot;color:#c77dbb;font-style:italic;&quot;&gt;LAZY&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@JoinColumn&lt;/span&gt;(name = &lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;loan_application_id&quot;&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;LoanApplication &lt;span style=&quot;color:#c77dbb;&quot;&gt;loanApplication&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;name&lt;/span&gt;;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;panNumber&lt;/span&gt;;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;address&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@Enumerated&lt;/span&gt;(EnumType.&lt;span style=&quot;color:#c77dbb;font-style:italic;&quot;&gt;STRING&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;ApplicantType &lt;span style=&quot;color:#c77dbb;&quot;&gt;applicantType&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;LocalDateTime &lt;span style=&quot;color:#c77dbb;&quot;&gt;createdAt&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@PrePersist&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color:#b3ae60;&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;color:#cf8e6d;&quot;&gt;public void &lt;/span&gt;&lt;span style=&quot;color:#56a8f5;&quot;&gt;onCreate&lt;/span&gt;(){&lt;br&gt;        &lt;span style=&quot;color:#cf8e6d;&quot;&gt;this&lt;/span&gt;.&lt;span style=&quot;color:#c77dbb;&quot;&gt;createdAt &lt;/span&gt;= LocalDateTime.&lt;span style=&quot;font-style:italic;&quot;&gt;now&lt;/span&gt;();&lt;br&gt;    }&lt;br&gt;&lt;br&gt;}&lt;br&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="460" width="400" x="270" y="1740" as="geometry" />
+          <mxGeometry height="460" width="400" x="290" y="1770" as="geometry" />
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-20" edge="1" parent="1" source="K5ep1uF1qaAUZufI2awd-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="N7z1UEAvUU_6h_jczGBi-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-21" edge="1" parent="1" source="K5ep1uF1qaAUZufI2awd-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="N7z1UEAvUU_6h_jczGBi-17">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="680" y="1725" />
+              <mxPoint x="680" y="2205" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-24" edge="1" parent="1" source="K5ep1uF1qaAUZufI2awd-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="K5ep1uF1qaAUZufI2awd-7">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="K5ep1uF1qaAUZufI2awd-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#A50040;fillColor=#d80073;align=center;verticalAlign=middle;rounded=0;fontColor=#ffffff;" value="Applicant" vertex="1">
           <mxGeometry height="30" width="120" x="390" y="1710" as="geometry" />
@@ -89,6 +103,24 @@
         </mxCell>
         <mxCell id="N7z1UEAvUU_6h_jczGBi-11" parent="1" style="whiteSpace=wrap;html=1;" value="Response DTO" vertex="1">
           <mxGeometry height="60" width="120" x="-690" y="1270" as="geometry" />
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-15" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color:#1e1f22;color:#bcbec4&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#cf8e6d;&quot;&gt;public class &lt;/span&gt;ApplicantRequestDTO {&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;Loan application ID can not be blank&quot;&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;loanApplication&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;Name can not be blank&quot;&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;name&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;PAN number can not be blank&quot;&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;panNumber&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;Address can not be blank&quot;&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;address&lt;/span&gt;;&lt;br&gt;&lt;br&gt;    &lt;span style=&quot;color:#b3ae60;&quot;&gt;@NotNull&lt;/span&gt;(message = &lt;span style=&quot;color:#6aab73;&quot;&gt;&quot;Applicant Type can not be blank&quot;&lt;/span&gt;)&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;ApplicantType &lt;span style=&quot;color:#c77dbb;&quot;&gt;applicantType&lt;/span&gt;;&lt;br&gt;&lt;br&gt;}&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="330" width="480" x="710" y="1780" as="geometry" />
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-22" edge="1" parent="1" source="N7z1UEAvUU_6h_jczGBi-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="N7z1UEAvUU_6h_jczGBi-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-17" parent="1" style="whiteSpace=wrap;html=1;" value="Response DTO" vertex="1">
+          <mxGeometry height="60" width="120" x="700" y="2160" as="geometry" />
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-18" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;background-color:#1e1f22;color:#bcbec4&quot;&gt;&lt;pre style=&quot;font-family:&#39;JetBrains Mono&#39;,monospace;font-size:9.8pt;&quot;&gt;&lt;span style=&quot;color:#cf8e6d;&quot;&gt;public class &lt;/span&gt;ApplicantResponseDTO {&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;UUID &lt;span style=&quot;color:#c77dbb;&quot;&gt;applicantId&lt;/span&gt;;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;UUID &lt;span style=&quot;color:#c77dbb;&quot;&gt;loanApplication&lt;/span&gt;;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;name&lt;/span&gt;;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;panNumber&lt;/span&gt;;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;String &lt;span style=&quot;color:#c77dbb;&quot;&gt;address&lt;/span&gt;;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;ApplicantType &lt;span style=&quot;color:#c77dbb;&quot;&gt;applicantType&lt;/span&gt;;&lt;br&gt;    &lt;span style=&quot;color:#cf8e6d;&quot;&gt;private &lt;/span&gt;LocalDateTime &lt;span style=&quot;color:#c77dbb;&quot;&gt;createdAt&lt;/span&gt;;&lt;br&gt;}&lt;br&gt;&lt;/pre&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="190" width="320" x="845" y="2110" as="geometry" />
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-23" edge="1" parent="1" source="N7z1UEAvUU_6h_jczGBi-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" target="N7z1UEAvUU_6h_jczGBi-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="N7z1UEAvUU_6h_jczGBi-19" parent="1" style="whiteSpace=wrap;html=1;" value="Request DTO" vertex="1">
+          <mxGeometry height="60" width="120" x="850" y="1710" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

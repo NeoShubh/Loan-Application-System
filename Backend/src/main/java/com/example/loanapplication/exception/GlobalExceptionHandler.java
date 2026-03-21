@@ -1,5 +1,6 @@
 package com.example.loanapplication.exception;
 
+import com.example.loanapplication.exception.applicant.ApplicantNotFoundException;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
 import com.example.loanapplication.exception.user.InvalidCredentialsException;
 import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
@@ -50,6 +51,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(LoanStageHistoryNotFoundException.class)
     public ResponseEntity<ApiError> HandleloanStageHistoryNotFoundException(LoanStageHistoryNotFoundException ex){
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
+    }
+
+    @ExceptionHandler(ApplicantNotFoundException.class)
+    public ResponseEntity<ApiError> HandleApplicantNotFoundException(ApplicantNotFoundException ex){
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
     }
