@@ -28,12 +28,18 @@ import java.util.UUID;
 @Service
 public class LoanApplicationServiceImpl implements LoanApplicationService {
 
+
     private final LoanApplicationRepository loanApplicationRepository;
     private final LoanStageHistoryRepository loanStageHistoryRepository;
     private final UserService userService;
     private final ApplicantService applicantService;
 
-    public LoanApplicationServiceImpl(LoanApplicationRepository loanApplicationRepository, LoanStageHistoryRepository loanStageHistoryRepository, UserService userService, ApplicantService applicantService) {
+    public LoanApplicationServiceImpl(
+            LoanApplicationRepository loanApplicationRepository,
+            LoanStageHistoryRepository loanStageHistoryRepository,
+            UserService userService,
+            ApplicantService applicantService
+    ) {
         this.loanApplicationRepository = loanApplicationRepository;
         this.loanStageHistoryRepository = loanStageHistoryRepository;
         this.userService = userService;
@@ -168,14 +174,15 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     public void deleteLoanApplication(String loanId) {
         LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanId)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not found"));
         //while deleting the loan application its history, documents and applicant should be deleted
-        loanApplicationRepository.deleteById(loanApplication.getLoanID());
         deleteAllLoanStageHistoryByLoanId(loanId);
         applicantService.deleteAllApplicantByLoanId(String.valueOf(loanApplication.getLoanID()));
+        loanApplicationRepository.deleteById(loanApplication.getLoanID());
+
     }
 
     @Override
     public boolean isLoanApplicationExists(String loanID) {
-         return loanApplicationRepository.existsByLoanID(UUID.fromString(loanID));
+        return loanApplicationRepository.existsByLoanID(UUID.fromString(loanID));
     }
 
     //LOAN STAGE HISTORY

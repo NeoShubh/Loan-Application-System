@@ -6,6 +6,7 @@ import com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplica
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplicationDTO.LoanApplicationResponseDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanStageHistory;
 import com.example.loanapplication.modules.loanapplicationmodule.service.LoanApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class LoanApplicationController {
 
     private final LoanApplicationService loanApplicationService;
 
-    public LoanApplicationController(LoanApplicationService loanApplicationService, LoanStageHistory loanStageHistory) {
+    public LoanApplicationController(LoanApplicationService loanApplicationService) {
         this.loanApplicationService = loanApplicationService;
     }
 

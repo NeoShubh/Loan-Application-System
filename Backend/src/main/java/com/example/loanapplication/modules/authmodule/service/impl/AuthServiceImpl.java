@@ -10,6 +10,7 @@ import com.example.loanapplication.modules.usermodule.dto.UserRequestDTO;
 import com.example.loanapplication.modules.usermodule.dto.UserResponseDTO;
 import com.example.loanapplication.modules.usermodule.entity.User;
 import com.example.loanapplication.modules.usermodule.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +19,11 @@ import java.util.Optional;
 //@Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
-    private final UserRepository userRepository;
+
     private final PasswordEncoder passwordEncoder;
+
+    private final UserRepository userRepository;
+
     private final JWTService jwtService;
 
     public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTService jwtService) {
