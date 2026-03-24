@@ -9,9 +9,9 @@ import java.util.UUID;
 public interface UserService {
 
     UserResponseDTO getUserByEmailID(String emailID);
-    UserResponseDTO getUserByUserID(UUID userID);
-    UserResponseDTO updateUser(UUID userID, UserRequestDTO userRequestDTO);
+    UserResponseDTO getUserByUserID(String userID);
+    UserResponseDTO updateUser(String userID, UserRequestDTO userRequestDTO);
     void deleteUserByEmailID(String emailID);
-    void deleteUserByUserID(UUID userID);
-    boolean isUserAvailable(UUID userID);
+    void deleteUserByUserID(String userID);
+    boolean isUserAvailable(String userID);
 }

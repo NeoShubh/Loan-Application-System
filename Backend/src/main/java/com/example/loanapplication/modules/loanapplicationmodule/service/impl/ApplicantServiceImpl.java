@@ -1,19 +1,19 @@
 package com.example.loanapplication.modules.loanapplicationmodule.service.impl;
 
 import com.example.loanapplication.exception.applicant.ApplicantNotFoundException;
+import com.example.loanapplication.exception.applicant.PrimaryApplicantaExists;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.applicantDTO.ApplicantRequestDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.applicantDTO.ApplicantResponseDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.entity.Applicant;
 import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanApplication;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.ApplicantType;
 import com.example.loanapplication.modules.loanapplicationmodule.repository.ApplicantRepository;
-import com.example.loanapplication.modules.loanapplicationmodule.repository.LoanApplicationRepository;
 import com.example.loanapplication.modules.loanapplicationmodule.service.ApplicantService;
-import com.example.loanapplication.modules.loanapplicationmodule.service.LoanApplicationService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,6 +28,20 @@ public class ApplicantServiceImpl implements ApplicantService {
 
     @Override
     public ApplicantResponseDTO createApplicant(ApplicantRequestDTO applicantRequestDTO) {
+
+        UUID loanId = UUID.fromString(applicantRequestDTO.getLoanApplication());
+
+        if (applicantRequestDTO.getApplicantType() == ApplicantType.PRIMARY) {
+
+            Optional<Applicant> existingPrimary =
+                    applicantRepository.findByLoanApplication_LoanIDAndApplicantType(
+                            loanId, ApplicantType.PRIMARY);
+
+            if (existingPrimary.isPresent()) {
+                throw new PrimaryApplicantaExists("Primary applicant already exists for this loan");
+            }
+        }
+
         Applicant applicant = new Applicant();
         applicant.setLoanApplication(LoanApplication.builder().loanID(UUID.fromString(applicantRequestDTO.getLoanApplication())).build());
         applicant.setName(applicantRequestDTO.getName());
@@ -113,20 +127,22 @@ public class ApplicantServiceImpl implements ApplicantService {
     @Override
     public ApplicantResponseDTO getPrimaryApplicant(String loanId) {
 
+        Optional<Applicant> applicant = applicantRepository
+                .findByLoanApplication_LoanIDAndApplicantType(UUID.fromString(loanId), ApplicantType.PRIMARY);
 
-        Applicant applicant = applicantRepository.findByLoanApplication_LoanIDAndApplicantType(UUID.fromString(loanId), ApplicantType.PRIMARY);
-        if (applicant == null) {
-            throw new ApplicantNotFoundException("Primary Applicant Not Found.");
-        }
+        Applicant result = applicant.orElseThrow(() ->
+                new ApplicantNotFoundException("Primary Applicant Not Found.")
+        );
 
         return ApplicantResponseDTO.builder()
-                .applicantId(applicant.getApplicantId())
-                .loanApplication(applicant.getLoanApplication().getLoanID())
-                .name(applicant.getName())
-                .panNumber(applicant.getPanNumber())
-                .address(applicant.getAddress())
-                .applicantType(applicant.getApplicantType())
-                .createdAt(applicant.getCreatedAt()).build();
+                .applicantId(result.getApplicantId())
+                .loanApplication(result.getLoanApplication().getLoanID())
+                .name(result.getName())
+                .panNumber(result.getPanNumber())
+                .address(result.getAddress())
+                .applicantType(result.getApplicantType())
+                .createdAt(result.getCreatedAt())
+                .build();
     }
 
     @Override

@@ -25,34 +25,34 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    ResponseEntity<UserResponseDTO> getUserByEmailID ( @RequestParam String email){
+    @GetMapping("/email/{email}")
+    ResponseEntity<UserResponseDTO> getUserByEmailID ( @PathVariable String email){
         UserResponseDTO userResponseDTO = userService.getUserByEmailID(email);
         return ResponseEntity.ok(userResponseDTO);
     }
 
 
     @GetMapping("/{userID}")
-    ResponseEntity<UserResponseDTO> getUserByUserID ( @PathVariable UUID userID){
+    ResponseEntity<UserResponseDTO> getUserByUserID ( @PathVariable String userID){
         UserResponseDTO userResponseDTO = userService.getUserByUserID(userID);
         return ResponseEntity.ok(userResponseDTO);
     }
 
     @PutMapping("/{userID}")
-    ResponseEntity<UserResponseDTO> updateUser(@PathVariable UUID userID,@RequestBody UserRequestDTO userRequestDTO){
+    ResponseEntity<UserResponseDTO> updateUser(@PathVariable String userID,@RequestBody UserRequestDTO userRequestDTO){
         UserResponseDTO userResponseDTO = userService.updateUser(userID,userRequestDTO);
         return ResponseEntity.ok(userResponseDTO);
     }
 
-    @DeleteMapping
-    ResponseEntity<?> deleteUserByEmailID(@RequestParam String email){
+    @DeleteMapping("/{email}")
+    ResponseEntity<?> deleteUserByEmailID(@PathVariable String email){
         userService.deleteUserByEmailID(email);
         return ResponseEntity.noContent().build();
 //        return ResponseEntity.ok("User deleted successfully.");
     }
 
     @DeleteMapping("/{userID}")
-    ResponseEntity<?> deleteUserByUserID(@PathVariable UUID userID){
+    ResponseEntity<?> deleteUserByUserID(@PathVariable String userID){
         userService.deleteUserByUserID(userID);
         return ResponseEntity.noContent().build();
 //        return ResponseEntity.ok("User deleted successfully.");

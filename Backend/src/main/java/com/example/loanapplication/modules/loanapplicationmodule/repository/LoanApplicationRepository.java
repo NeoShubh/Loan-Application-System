@@ -9,6 +9,6 @@ import java.util.UUID;
 @Repository
 public interface LoanApplicationRepository extends JpaRepository<LoanApplication, UUID> {
 
-    List<LoanApplication> findByCreatedByUserID(UUID userID);
+    List<LoanApplication> findByCreatedBy_UserID(UUID userID);
     boolean existsByLoanID(UUID loanID);
 }

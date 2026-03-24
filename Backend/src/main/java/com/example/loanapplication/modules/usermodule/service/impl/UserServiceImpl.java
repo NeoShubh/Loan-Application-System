@@ -32,14 +32,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO getUserByUserID(UUID userID) {
-        User user = userRepository.findByuserID(userID).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+    public UserResponseDTO getUserByUserID(String userID) {
+        User user = userRepository.findByuserID(UUID.fromString(userID)).orElseThrow(() -> new UserNotFoundException("User Not Found"));
         return UserResponseDTO.builder().userID(user.getUserID()).name(user.getName()).email(user.getEmail()).role(user.getRole()).createdAt(user.getCreatedAt()).build();
     }
 
     @Override
-    public UserResponseDTO updateUser(UUID userID, UserRequestDTO userRequestDTO) {
-        User user = userRepository.findByuserID(userID).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+    public UserResponseDTO updateUser(String userID, UserRequestDTO userRequestDTO) {
+        User user = userRepository.findByuserID(UUID.fromString(userID)).orElseThrow(() -> new UserNotFoundException("User Not Found"));
 
         if (userRequestDTO.getEmail() != null) {
             user.setEmail(userRequestDTO.getEmail());
@@ -66,13 +66,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserByUserID(UUID userID) {
-        User user = userRepository.findByuserID(userID).orElseThrow(() -> new UserNotFoundException("User Not Found"));
+    public void deleteUserByUserID(String userID) {
+        User user = userRepository.findByuserID(UUID.fromString(userID)).orElseThrow(() -> new UserNotFoundException("User Not Found"));
         userRepository.delete(user);
     }
 
     @Override
-    public boolean isUserAvailable(UUID userID) {
-        return userRepository.existsByUserID(userID);
+    public boolean isUserAvailable(String userID) {
+        return userRepository.existsByUserID(UUID.fromString(userID));
     }
 }

@@ -1,6 +1,7 @@
 package com.example.loanapplication.exception;
 
 import com.example.loanapplication.exception.applicant.ApplicantNotFoundException;
+import com.example.loanapplication.exception.applicant.PrimaryApplicantaExists;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
 import com.example.loanapplication.exception.user.InvalidCredentialsException;
 import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
@@ -61,12 +62,24 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
     }
 
+
+        @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
+        public ResponseEntity<?> handleAccessDenied() {
+            ApiError apiError = new ApiError("Access Denied: You are not allowed to perform this action");
+            return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED );
+
+        }
+
     @ExceptionHandler(LoanApplicationNotFoundException.class)
     public ResponseEntity<ApiError> handleLoanApplicationNotFoundException(LoanApplicationNotFoundException ex){
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
     }
-
+    @ExceptionHandler(PrimaryApplicantaExists.class)
+    public ResponseEntity<ApiError> handlePrimaryApplicantExists(PrimaryApplicantaExists ex){
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.FOUND );
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGenericException(Exception ex) {

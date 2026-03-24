@@ -3,6 +3,7 @@ package com.example.loanapplication.modules.loanapplicationmodule.controller;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.applicantDTO.ApplicantRequestDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.applicantDTO.ApplicantResponseDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.service.ApplicantService;
+import jakarta.validation.Valid;
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class ApplicantController {
     }
 
     @PostMapping("/applicants")
-    ResponseEntity<ApplicantResponseDTO> createApplicant(@RequestBody ApplicantRequestDTO applicantRequestDTO){
+    ResponseEntity<ApplicantResponseDTO> createApplicant( @Valid @RequestBody ApplicantRequestDTO applicantRequestDTO){
         ApplicantResponseDTO applicantResponseDTO = applicantService.createApplicant(applicantRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(applicantResponseDTO);
     }
@@ -53,19 +54,19 @@ public class ApplicantController {
     }
 
     @GetMapping("/{loanId}/applicants/primary")
-    ResponseEntity<ApplicantResponseDTO>getPrimaryApplicant(String loanId){
+    ResponseEntity<ApplicantResponseDTO>getPrimaryApplicant(@PathVariable String loanId){
         ApplicantResponseDTO applicantResponseDTO = applicantService.getPrimaryApplicant(loanId);
         return ResponseEntity.status(HttpStatus.OK).body(applicantResponseDTO);
     }
 
     @GetMapping("/{loanId}/applicants/secondary")
-    ResponseEntity<List<ApplicantResponseDTO>>getAllSecondaryApplicant(String loanId){
+    ResponseEntity<List<ApplicantResponseDTO>>getAllSecondaryApplicant(@PathVariable String loanId){
         List <ApplicantResponseDTO> responseDTOList = applicantService.getAllSecondaryApplicant(loanId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTOList);
     }
 
     @GetMapping("/{loanId}/applicants")
-    ResponseEntity<List<ApplicantResponseDTO>>getAllApplicant(String loanId){
+    ResponseEntity<List<ApplicantResponseDTO>>getAllApplicant(@PathVariable String loanId){
         List <ApplicantResponseDTO> responseDTOList = applicantService.getAllApplicant(loanId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTOList);
     }

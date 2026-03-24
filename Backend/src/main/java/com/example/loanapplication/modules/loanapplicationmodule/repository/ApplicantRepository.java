@@ -13,8 +13,7 @@ import java.util.UUID;
 public interface ApplicantRepository extends JpaRepository<Applicant, UUID> {
     Long deleteAllByLoanApplicationLoanID(UUID loanID);
     List <Applicant> findByLoanApplicationLoanID(UUID loanID);
-//    Optional<Applicant> findByLoanApplication_LoanIdAndApplicantType(UUID loanId, ApplicantType type);
-//    List<Applicant> findAllByLoanApplication_LoanIdAndApplicantType(UUID loanId, ApplicantType type);
-    Applicant findByLoanApplication_LoanIDAndApplicantType(UUID loanID, ApplicantType applicantType);
+//    Optional <Applicant> findByLoanApplication_LoanIDAndApplicantType(UUID loanId, ApplicantType applicantType);
+    Optional <Applicant> findByLoanApplication_LoanIDAndApplicantType(UUID loanID, ApplicantType applicantType);
     List<Applicant> findAllByLoanApplication_LoanIDAndApplicantType(UUID loanID, ApplicantType applicantType);
 }

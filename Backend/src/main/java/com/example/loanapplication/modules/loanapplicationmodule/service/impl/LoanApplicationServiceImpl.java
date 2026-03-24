@@ -20,6 +20,7 @@ import com.example.loanapplication.modules.loanapplicationmodule.service.LoanApp
 import com.example.loanapplication.modules.usermodule.entity.User;
 import com.example.loanapplication.modules.usermodule.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,6 @@ import java.util.UUID;
 
 @Service
 public class LoanApplicationServiceImpl implements LoanApplicationService {
-
 
     private final LoanApplicationRepository loanApplicationRepository;
     private final LoanStageHistoryRepository loanStageHistoryRepository;
@@ -58,14 +58,20 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .creditStatus(CreditStatus.valueOf(loanApplicationRequestDTO.getCreditStatus()))
                 .createdBy(user).build();
 
+        System.out.println(loanApplication);
+
+
         loanApplicationRepository.save(loanApplication);
 
         // Loan Stage History Creation
         LoanStageHistoryRequestDTO loanStageHistoryRequestDTO = LoanStageHistoryRequestDTO.builder()
                 .loanApplicationId(String.valueOf(loanApplication.getLoanID()))
                 .changedBy(String.valueOf(user.getUserID()))
-                .oldStage(LoanStage.NOT_INITIATED)
+                .oldStage(null)
                 .currentStage(loanApplication.getLoanStage()).build();
+        System.out.println(loanStageHistoryRequestDTO);
+
+
 
         LoanStageHistoryResponseDTO loanStageHistoryResponseDTO =
                 createLoanStageHistory(String.valueOf(loanApplication.getLoanID()), String.valueOf(user.getUserID()), loanStageHistoryRequestDTO);
@@ -81,31 +87,58 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .createdBy(loanApplication.getCreatedBy().getUserID())
                 .updatedAt(loanApplication.getUpdatedAt()).build();
     }
-
     @Override
     public List<LoanApplicationResponseDTO> getAllLoanApplicationByUserID(String userId) {
+
+        List<LoanApplication> loansList =
+                loanApplicationRepository.findByCreatedBy_UserID(UUID.fromString(userId));
+
+        if (loansList.isEmpty()) {
+            throw new UserNotFoundException("User doesn't exist or no loans found");
+        }
+
         List<LoanApplicationResponseDTO> responseList = new ArrayList<>();
 
-        if (userService.isUserAvailable(UUID.fromString(userId))) {
-            List<LoanApplication> loansList = loanApplicationRepository.findByCreatedByUserID(UUID.fromString(userId));
-            for (int i = 0; i < loansList.size(); i++) {
-                LoanApplicationResponseDTO singleLoanResponseDTO = LoanApplicationResponseDTO.builder()
-                        .loanID(loansList.get(i).getLoanID())
-                        .loanType(loansList.get(i).getLoanType())
-                        .loanStage(loansList.get(i).getLoanStage())
-                        .rcuStatus(loansList.get(i).getRcuStatus())
-                        .creditStatus(loansList.get(i).getCreditStatus())
-                        .createdBy(loansList.get(i).getCreatedBy().getUserID())
-                        .createdAt(loansList.get(i).getCreatedAt())
-                        .updatedAt(loansList.get(i).getUpdatedAt()).build();
-                responseList.add(singleLoanResponseDTO);
-            }
-        } else {
-            throw new UserNotFoundException("User doesn't exist");
+        for (LoanApplication loan : loansList) {
+            responseList.add(LoanApplicationResponseDTO.builder()
+                    .loanID(loan.getLoanID())
+                    .loanType(loan.getLoanType())
+                    .loanStage(loan.getLoanStage())
+                    .rcuStatus(loan.getRcuStatus())
+                    .creditStatus(loan.getCreditStatus())
+                    .createdBy(loan.getCreatedBy().getUserID())
+                    .createdAt(loan.getCreatedAt())
+                    .updatedAt(loan.getUpdatedAt())
+                    .build());
         }
 
         return responseList;
     }
+
+//    @Override
+//    public List<LoanApplicationResponseDTO> getAllLoanApplicationByUserID(String userId) {
+//        List<LoanApplicationResponseDTO> responseList = new ArrayList<>();
+//
+////        if (userService.isUserAvailable(userId)) {
+//            List<LoanApplication> loansList = loanApplicationRepository.findByCreatedBy_UserID(UUID.fromString(userId));
+//            for (int i = 0; i < loansList.size(); i++) {
+//                LoanApplicationResponseDTO singleLoanResponseDTO = LoanApplicationResponseDTO.builder()
+//                        .loanID(loansList.get(i).getLoanID())
+//                        .loanType(loansList.get(i).getLoanType())
+//                        .loanStage(loansList.get(i).getLoanStage())
+//                        .rcuStatus(loansList.get(i).getRcuStatus())
+//                        .creditStatus(loansList.get(i).getCreditStatus())
+//                        .createdBy(loansList.get(i).getCreatedBy().getUserID())
+//                        .createdAt(loansList.get(i).getCreatedAt())
+//                        .updatedAt(loansList.get(i).getUpdatedAt()).build();
+//                responseList.add(singleLoanResponseDTO);
+//            }
+////        } else {
+////            throw new UserNotFoundException("User doesn't exist");
+////        }
+//
+//        return responseList;
+//    }
 
     @Override
     public LoanApplicationResponseDTO getLoanApplicationById(String loanId) {
@@ -169,7 +202,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .updatedAt(loanApplication.getUpdatedAt())
                 .build();
     }
-
+    @Transactional
     @Override
     public void deleteLoanApplication(String loanId) {
         LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanId)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not found"));
@@ -257,6 +290,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
+    @Transactional
     public void deleteAllLoanStageHistoryByLoanId(String LoanId) {
         long count = loanStageHistoryRepository.deleteAllByLoanApplicationLoanID(UUID.fromString(LoanId));
 
