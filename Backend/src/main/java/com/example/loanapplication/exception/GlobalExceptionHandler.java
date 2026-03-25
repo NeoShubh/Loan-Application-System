@@ -2,6 +2,7 @@ package com.example.loanapplication.exception;
 
 import com.example.loanapplication.exception.applicant.ApplicantNotFoundException;
 import com.example.loanapplication.exception.applicant.PrimaryApplicantaExists;
+import com.example.loanapplication.exception.document.DocumentNotFoundException;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
 import com.example.loanapplication.exception.user.InvalidCredentialsException;
 import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.print.Doc;
 import java.util.List;
 
 @RestControllerAdvice
@@ -67,8 +69,13 @@ public class GlobalExceptionHandler {
         public ResponseEntity<?> handleAccessDenied() {
             ApiError apiError = new ApiError("Access Denied: You are not allowed to perform this action");
             return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED );
-
         }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    public ResponseEntity<?> handleDocumentNotFoundException(DocumentNotFoundException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
+    }
 
     @ExceptionHandler(LoanApplicationNotFoundException.class)
     public ResponseEntity<ApiError> handleLoanApplicationNotFoundException(LoanApplicationNotFoundException ex){
