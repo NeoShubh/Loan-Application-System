@@ -1,6 +1,5 @@
 package com.example.loanapplication.modules.documentmodule.entity;
 
-import com.example.loanapplication.exception.applicant.ApplicantNotFoundException;
 import com.example.loanapplication.modules.documentmodule.enums.DocumentStatus;
 import com.example.loanapplication.modules.documentmodule.enums.DocumentType;
 import com.example.loanapplication.modules.loanapplicationmodule.entity.Applicant;
@@ -20,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="documents")
+@Table(name = "documents")
 public class Document {
 
     @Id
@@ -57,12 +56,12 @@ public class Document {
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void onCreate(){
+    public void onCreate() {
         this.uploadedAt = LocalDateTime.now();
     }
 
     @PreUpdate
-    public void onUpdate(){
+    public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 }

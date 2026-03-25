@@ -2,10 +2,11 @@ package com.example.loanapplication.exception;
 
 import com.example.loanapplication.exception.applicant.ApplicantNotFoundException;
 import com.example.loanapplication.exception.applicant.PrimaryApplicantaExists;
+import com.example.loanapplication.exception.document.DocumentFormatNotAllowedException;
 import com.example.loanapplication.exception.document.DocumentNotFoundException;
+import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
 import com.example.loanapplication.exception.user.InvalidCredentialsException;
-import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.user.UserAlreadyExistsException;
 import com.example.loanapplication.exception.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.print.Doc;
 import java.util.List;
 
 @RestControllerAdvice
@@ -35,57 +35,64 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ApiError> handleUserAlreadyExistException(UserAlreadyExistsException ex){
+    public ResponseEntity<ApiError> handleUserAlreadyExistException(UserAlreadyExistsException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST );
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ApiError> handleInvalidCredentialsException(InvalidCredentialsException ex){
+    public ResponseEntity<ApiError> handleInvalidCredentialsException(InvalidCredentialsException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED );
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiError> handleUserNotFoundException(UserNotFoundException ex){
+    public ResponseEntity<ApiError> handleUserNotFoundException(UserNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(LoanStageHistoryNotFoundException.class)
-    public ResponseEntity<ApiError> HandleloanStageHistoryNotFoundException(LoanStageHistoryNotFoundException ex){
+    public ResponseEntity<ApiError> HandleloanStageHistoryNotFoundException(LoanStageHistoryNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ApplicantNotFoundException.class)
-    public ResponseEntity<ApiError> HandleApplicantNotFoundException(ApplicantNotFoundException ex){
+    public ResponseEntity<ApiError> HandleApplicantNotFoundException(ApplicantNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
 
-        @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
-        public ResponseEntity<?> handleAccessDenied() {
-            ApiError apiError = new ApiError("Access Denied: You are not allowed to perform this action");
-            return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED );
-        }
+    @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
+    public ResponseEntity<?> handleAccessDenied() {
+        ApiError apiError = new ApiError("Access Denied: You are not allowed to perform this action");
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+    }
 
     @ExceptionHandler(DocumentNotFoundException.class)
     public ResponseEntity<?> handleDocumentNotFoundException(DocumentNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DocumentFormatNotAllowedException.class)
+    public ResponseEntity<?> handleDocumentFormatNotAllowedException(DocumentFormatNotAllowedException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(LoanApplicationNotFoundException.class)
-    public ResponseEntity<ApiError> handleLoanApplicationNotFoundException(LoanApplicationNotFoundException ex){
+    public ResponseEntity<ApiError> handleLoanApplicationNotFoundException(LoanApplicationNotFoundException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND );
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(PrimaryApplicantaExists.class)
-    public ResponseEntity<ApiError> handlePrimaryApplicantExists(PrimaryApplicantaExists ex){
+    public ResponseEntity<ApiError> handlePrimaryApplicantExists(PrimaryApplicantaExists ex) {
         ApiError apiError = new ApiError(ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.FOUND );
+        return new ResponseEntity<>(apiError, HttpStatus.FOUND);
     }
 
     @ExceptionHandler(Exception.class)
