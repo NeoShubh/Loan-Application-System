@@ -6,6 +6,7 @@ import com.example.loanapplication.modules.documentmodule.entity.Document;
 import com.example.loanapplication.modules.documentmodule.enums.DocumentStatus;
 import com.example.loanapplication.modules.documentmodule.service.DocumentService;
 import jakarta.validation.Valid;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,8 @@ public class DocumentController {
     }
 
     @PostMapping("/documents")
-    ResponseEntity<DocumentResponseDTO> createDocument(@RequestBody @Valid DocumentRequestDTO documentRequestDTO, @RequestParam MultipartFile file) {
-        DocumentResponseDTO documentResponseDTO = documentService.createDocument(documentRequestDTO, file);
+    ResponseEntity<DocumentResponseDTO> createDocument(@RequestParam MultipartFile file,@RequestParam UUID loanApplicationId,@RequestParam UUID applicantId,@RequestParam String documentType,@RequestParam UUID UploadedBy){
+        DocumentResponseDTO documentResponseDTO = documentService.createDocument(file, loanApplicationId, applicantId, documentType, UploadedBy);
         return ResponseEntity.status(HttpStatus.CREATED).body(documentResponseDTO);
     }
 
@@ -46,6 +47,12 @@ public class DocumentController {
     @DeleteMapping("/loans/{loanId}/documents")
     ResponseEntity<String> deleteAllDocumentsByLoanId(@PathVariable UUID loanId) {
         documentService.deleteAllDocumentsByLoanId(loanId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Content Deleted");
+    }
+
+    @DeleteMapping("/loans/applicants/{applicantId}/documents")
+    ResponseEntity<String> deleteAllDocumentsByApplicantId(@PathVariable UUID applicantId) {
+        documentService.deleteAllDocumentsByApplicantId(applicantId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Content Deleted");
     }
 
@@ -74,8 +81,8 @@ public class DocumentController {
     }
 
     @PutMapping("/documents/{documentId}/status")
-    ResponseEntity<DocumentResponseDTO> updateDocumentStatus(UUID documentId, DocumentStatus documentStatus, String Remarks){
-        DocumentResponseDTO documentResponseDTO = documentService.updateDocumentStatus(documentId,documentStatus,Remarks);
+    ResponseEntity<DocumentResponseDTO> updateDocumentStatus(UUID documentId,UUID verifiedBy,  DocumentStatus documentStatus, String Remarks){
+        DocumentResponseDTO documentResponseDTO = documentService.updateDocumentStatus(documentId, verifiedBy,documentStatus,Remarks);
         return ResponseEntity.status(HttpStatus.OK).body(documentResponseDTO);
     }
 

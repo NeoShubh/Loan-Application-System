@@ -3,6 +3,7 @@ package com.example.loanapplication.modules.loanapplicationmodule.service.impl;
 import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
 import com.example.loanapplication.exception.user.UserNotFoundException;
+import com.example.loanapplication.modules.documentmodule.service.DocumentService;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryRequestDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryResponseDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplicationDTO.LoanApplicationRequestDTO;
@@ -33,17 +34,19 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private final LoanStageHistoryRepository loanStageHistoryRepository;
     private final UserService userService;
     private final ApplicantService applicantService;
+    private final DocumentService documentService;
 
     public LoanApplicationServiceImpl(
             LoanApplicationRepository loanApplicationRepository,
             LoanStageHistoryRepository loanStageHistoryRepository,
             UserService userService,
-            ApplicantService applicantService
+            ApplicantService applicantService, DocumentService documentService
     ) {
         this.loanApplicationRepository = loanApplicationRepository;
         this.loanStageHistoryRepository = loanStageHistoryRepository;
         this.userService = userService;
         this.applicantService = applicantService;
+        this.documentService = documentService;
     }
 
     @Override
@@ -115,30 +118,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         return responseList;
     }
 
-//    @Override
-//    public List<LoanApplicationResponseDTO> getAllLoanApplicationByUserID(String userId) {
-//        List<LoanApplicationResponseDTO> responseList = new ArrayList<>();
-//
-////        if (userService.isUserAvailable(userId)) {
-//            List<LoanApplication> loansList = loanApplicationRepository.findByCreatedBy_UserID(UUID.fromString(userId));
-//            for (int i = 0; i < loansList.size(); i++) {
-//                LoanApplicationResponseDTO singleLoanResponseDTO = LoanApplicationResponseDTO.builder()
-//                        .loanID(loansList.get(i).getLoanID())
-//                        .loanType(loansList.get(i).getLoanType())
-//                        .loanStage(loansList.get(i).getLoanStage())
-//                        .rcuStatus(loansList.get(i).getRcuStatus())
-//                        .creditStatus(loansList.get(i).getCreditStatus())
-//                        .createdBy(loansList.get(i).getCreatedBy().getUserID())
-//                        .createdAt(loansList.get(i).getCreatedAt())
-//                        .updatedAt(loansList.get(i).getUpdatedAt()).build();
-//                responseList.add(singleLoanResponseDTO);
-//            }
-////        } else {
-////            throw new UserNotFoundException("User doesn't exist");
-////        }
-//
-//        return responseList;
-//    }
+
 
     @Override
     public LoanApplicationResponseDTO getLoanApplicationById(String loanId) {
@@ -208,6 +188,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanId)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not found"));
         //while deleting the loan application its history, documents and applicant should be deleted
         deleteAllLoanStageHistoryByLoanId(loanId);
+        documentService.deleteAllDocumentsByLoanId(UUID.fromString(loanId));
         applicantService.deleteAllApplicantByLoanId(String.valueOf(loanApplication.getLoanID()));
         loanApplicationRepository.deleteById(loanApplication.getLoanID());
 

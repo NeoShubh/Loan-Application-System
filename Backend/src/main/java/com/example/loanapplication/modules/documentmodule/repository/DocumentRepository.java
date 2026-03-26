@@ -13,4 +13,5 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     List<Document> findAllByLoanApplication_LoanID(UUID loanID);
     List<Document> findAllByApplicant_applicantId(UUID applicantId);
     Long deleteAllByLoanApplicationLoanID(UUID loanID);
+    Long deleteAllByApplicantApplicantId(UUID applicantId);
 }

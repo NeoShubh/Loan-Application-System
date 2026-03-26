@@ -32,35 +32,57 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentResponseDTO createDocument(DocumentRequestDTO documentRequestDTO, MultipartFile file) {
+    public DocumentResponseDTO createDocument(MultipartFile file, UUID loanApplicationId, UUID applicantId, String documentType, UUID uploadedBy) {
 
-        LoanApplication loanApplication = LoanApplication.builder().loanID(UUID.fromString(documentRequestDTO.getLoanApplication())).build();
-        Applicant applicant = Applicant.builder().applicantId(UUID.fromString(documentRequestDTO.getApplicant())).build();
-        User uploadedByUser = User.builder().userID(UUID.fromString(documentRequestDTO.getUploadedBy())).build();
-        User verifiedByUser = User.builder().userID(UUID.fromString(documentRequestDTO.getVerifiedBy())).build();
-        //Handling of actual document upload
+        LoanApplication loanApplication = LoanApplication.builder().loanID(loanApplicationId).build();
+        Applicant applicant = Applicant.builder().applicantId(applicantId).build();
+        User uploadedByUser = User.builder().userID(uploadedBy).build();
+
         if (!file.getContentType().equals("application/pdf")) {
             throw new DocumentFormatNotAllowedException("Only PDF format is allowed");
         }
+
         Document document = new Document();
+
         String filePath = fileStorageService.saveFile(file);
-        document.setFileUrl(filePath);
-        document.setLoanApplication(loanApplication);
-        document.setApplicant(applicant);
-        document.setDocumentStatus(DocumentStatus.valueOf(documentRequestDTO.getDocumentStatus()));
-        document.setDocumentType(DocumentType.valueOf(documentRequestDTO.getDocumentType()));
-        document.setUploadedBy(uploadedByUser);
-        document.setVerifiedBy(verifiedByUser);
-        document.setRemarks(documentRequestDTO.getRemarks());
+
+        document.setFileUrl(filePath); //File URL
+        document.setDocumentStatus(DocumentStatus.UPLOADED); //document status
+        document.setLoanApplication(loanApplication); //LoanApplication
+        document.setApplicant(applicant); // Applicant
+        document.setUploadedBy(uploadedByUser); //UploadedBy
+        document.setDocumentType(DocumentType.valueOf(documentType));//document Type
 
         documentRepository.save(document);
-        return DocumentResponseDTO.builder().DocumentId(document.getDocumentId()).loanApplication(document.getLoanApplication().getLoanID()).applicant(document.getApplicant().getApplicantId()).documentStatus(document.getDocumentStatus()).documentType(document.getDocumentType()).fileUrl(document.getFileUrl()).uploadedBy(document.getUploadedBy().getUserID()).verifiedBy(document.getVerifiedBy().getUserID()).remarks(document.getRemarks()).build();
+
+        return DocumentResponseDTO.builder()
+                .documentId(document.getDocumentId())
+                .loanApplication(document.getLoanApplication().getLoanID())
+                .applicant(document.getApplicant().getApplicantId())
+                .documentType(document.getDocumentType())
+                .documentStatus(document.getDocumentStatus())
+                .fileUrl(document.getFileUrl())
+                .uploadedBy(document.getUploadedBy().getUserID())
+                .uploadedAt(document.getUploadedAt())
+                .build();
     }
 
     @Override
     public DocumentResponseDTO getDocumentById(UUID documentId) {
         Document document = documentRepository.findById(documentId).orElseThrow(() -> new DocumentNotFoundException("Document is not available"));
-        return DocumentResponseDTO.builder().DocumentId(document.getDocumentId()).loanApplication(document.getLoanApplication().getLoanID()).applicant(document.getApplicant().getApplicantId()).documentStatus(document.getDocumentStatus()).documentType(document.getDocumentType()).fileUrl(document.getFileUrl()).uploadedBy(document.getUploadedBy().getUserID()).verifiedBy(document.getVerifiedBy().getUserID()).remarks(document.getRemarks()).build();
+        return DocumentResponseDTO.builder()
+                .documentId(document.getDocumentId())
+                .loanApplication(document.getLoanApplication().getLoanID())
+                .applicant(document.getApplicant().getApplicantId())
+                .documentStatus(document.getDocumentStatus())
+                .documentType(document.getDocumentType())
+                .fileUrl(document.getFileUrl())
+                .uploadedBy(document.getUploadedBy().getUserID())
+                .uploadedAt(document.getUploadedAt())
+                .verifiedBy(document.getVerifiedBy().getUserID())
+                .verifiedAt(document.getVerifiedAt())
+                .updatedAt(document.getUpdatedAt())
+                .remarks(document.getRemarks()).build();
     }
 
     @Override
@@ -69,7 +91,19 @@ public class DocumentServiceImpl implements DocumentService {
         List<DocumentResponseDTO> documentResponseList = new ArrayList<>();
 
         for (int i = 0; i < documents.size(); i++) {
-            DocumentResponseDTO singleDocumentResponseDTO = DocumentResponseDTO.builder().DocumentId(documents.get(i).getDocumentId()).loanApplication(documents.get(i).getLoanApplication().getLoanID()).applicant(documents.get(i).getApplicant().getApplicantId()).documentStatus(documents.get(i).getDocumentStatus()).documentType(documents.get(i).getDocumentType()).fileUrl(documents.get(i).getFileUrl()).uploadedBy(documents.get(i).getUploadedBy().getUserID()).verifiedBy(documents.get(i).getVerifiedBy().getUserID()).remarks(documents.get(i).getRemarks()).build();
+            DocumentResponseDTO singleDocumentResponseDTO = DocumentResponseDTO.builder()
+                    .documentId(documents.get(i).getDocumentId())
+                    .loanApplication(documents.get(i).getLoanApplication().getLoanID())
+                    .applicant(documents.get(i).getApplicant().getApplicantId())
+                    .documentStatus(documents.get(i).getDocumentStatus())
+                    .documentType(documents.get(i).getDocumentType())
+                    .fileUrl(documents.get(i).getFileUrl())
+                    .uploadedBy(documents.get(i).getUploadedBy().getUserID())
+                    .updatedAt(documents.get(i).getUpdatedAt())
+                    .verifiedBy(documents.get(i).getVerifiedBy().getUserID())
+                    .verifiedAt(documents.get(i).getVerifiedAt())
+                    .updatedAt(documents.get(i).getUpdatedAt())
+                    .remarks(documents.get(i).getRemarks()).build();
 
             documentResponseList.add(singleDocumentResponseDTO);
         }
@@ -83,7 +117,19 @@ public class DocumentServiceImpl implements DocumentService {
         List<DocumentResponseDTO> documentResponseList = new ArrayList<>();
 
         for (int i = 0; i < documents.size(); i++) {
-            DocumentResponseDTO singleDocumentResponseDTO = DocumentResponseDTO.builder().DocumentId(documents.get(i).getDocumentId()).loanApplication(documents.get(i).getLoanApplication().getLoanID()).applicant(documents.get(i).getApplicant().getApplicantId()).documentStatus(documents.get(i).getDocumentStatus()).documentType(documents.get(i).getDocumentType()).fileUrl(documents.get(i).getFileUrl()).uploadedBy(documents.get(i).getUploadedBy().getUserID()).verifiedBy(documents.get(i).getVerifiedBy().getUserID()).remarks(documents.get(i).getRemarks()).build();
+            DocumentResponseDTO singleDocumentResponseDTO = DocumentResponseDTO.builder().
+                    documentId(documents.get(i).getDocumentId())
+                    .loanApplication(documents.get(i).getLoanApplication().getLoanID())
+                    .applicant(documents.get(i).getApplicant().getApplicantId())
+                    .documentStatus(documents.get(i).getDocumentStatus())
+                    .documentType(documents.get(i).getDocumentType())
+                    .fileUrl(documents.get(i).getFileUrl())
+                    .uploadedBy(documents.get(i).getUploadedBy().getUserID())
+                    .updatedAt(documents.get(i).getUpdatedAt())
+                    .verifiedBy(documents.get(i).getVerifiedBy().getUserID())
+                    .verifiedAt(documents.get(i).getVerifiedAt())
+                    .updatedAt(documents.get(i).getUpdatedAt())
+                    .remarks(documents.get(i).getRemarks()).build();
 
             documentResponseList.add(singleDocumentResponseDTO);
         }
@@ -94,7 +140,6 @@ public class DocumentServiceImpl implements DocumentService {
     public DocumentResponseDTO updateDocument(UUID documentId, DocumentRequestDTO documentRequestDTO) {
         Document document = documentRepository.findById(documentId).orElseThrow(() -> new DocumentNotFoundException("Document is not available"));
 
-
         if (documentRequestDTO.getApplicant() != null) {
             Applicant applicant = Applicant.builder().applicantId(UUID.fromString(documentRequestDTO.getApplicant())).build();
             document.setApplicant(applicant);
@@ -104,17 +149,18 @@ public class DocumentServiceImpl implements DocumentService {
             document.setDocumentType(DocumentType.valueOf(documentRequestDTO.getDocumentType()));
         }
 
-        if (documentRequestDTO.getFileUrl() != null) {
-            document.setFileUrl(documentRequestDTO.getFileUrl());
-        }
-
-        if (documentRequestDTO.getRemarks() != null) {
-            document.setRemarks(documentRequestDTO.getRemarks());
-        }
-
         documentRepository.save(document);
 
-        return DocumentResponseDTO.builder().DocumentId(document.getDocumentId()).loanApplication(document.getLoanApplication().getLoanID()).applicant(document.getApplicant().getApplicantId()).documentStatus(document.getDocumentStatus()).documentType(document.getDocumentType()).fileUrl(document.getFileUrl()).uploadedBy(document.getUploadedBy().getUserID()).verifiedBy(document.getVerifiedBy().getUserID()).remarks(document.getRemarks()).build();
+        return DocumentResponseDTO.builder()
+                .documentId(document.getDocumentId())
+                .loanApplication(document.getLoanApplication().getLoanID())
+                .applicant(document.getApplicant().getApplicantId())
+                .documentStatus(document.getDocumentStatus())
+                .documentType(document.getDocumentType())
+                .fileUrl(document.getFileUrl())
+                .uploadedBy(document.getUploadedBy().getUserID())
+                .verifiedBy(document.getVerifiedBy().getUserID())
+                .remarks(document.getRemarks()).build();
     }
 
     @Override
@@ -130,16 +176,31 @@ public class DocumentServiceImpl implements DocumentService {
         String filePath = fileStorageService.saveFile(file);
         document.setFileUrl(filePath);
         documentRepository.save(document);
-        return DocumentResponseDTO.builder().DocumentId(document.getDocumentId()).loanApplication(document.getLoanApplication().getLoanID()).applicant(document.getApplicant().getApplicantId()).documentStatus(document.getDocumentStatus()).documentType(document.getDocumentType()).fileUrl(document.getFileUrl()).uploadedBy(document.getUploadedBy().getUserID()).verifiedBy(document.getVerifiedBy().getUserID()).remarks(document.getRemarks()).build();
+        return DocumentResponseDTO.builder().documentId(document.getDocumentId()).loanApplication(document.getLoanApplication().getLoanID()).applicant(document.getApplicant().getApplicantId()).documentStatus(document.getDocumentStatus()).documentType(document.getDocumentType()).fileUrl(document.getFileUrl()).uploadedBy(document.getUploadedBy().getUserID()).verifiedBy(document.getVerifiedBy().getUserID()).remarks(document.getRemarks()).build();
     }
 
+    //mainly used by RCU user
     @Override
-    public DocumentResponseDTO updateDocumentStatus(UUID documentId, DocumentStatus documentStatus, String Remarks) {
+    public DocumentResponseDTO updateDocumentStatus(UUID documentId,UUID verifiedBy, DocumentStatus documentStatus, String Remarks) {
         Document document = documentRepository.findById(documentId).orElseThrow(() -> new DocumentNotFoundException("Document is not available"));
+        User rcuUser = User.builder().userID(verifiedBy).build();
         document.setDocumentStatus(documentStatus);
         document.setRemarks(Remarks);
+        document.setVerifiedBy(rcuUser);
         documentRepository.save(document);
-        return DocumentResponseDTO.builder().DocumentId(document.getDocumentId()).loanApplication(document.getLoanApplication().getLoanID()).applicant(document.getApplicant().getApplicantId()).documentStatus(document.getDocumentStatus()).documentType(document.getDocumentType()).fileUrl(document.getFileUrl()).uploadedBy(document.getUploadedBy().getUserID()).verifiedBy(document.getVerifiedBy().getUserID()).remarks(document.getRemarks()).build();
+        return DocumentResponseDTO.builder()
+                .documentId(document.getDocumentId())
+                .loanApplication(document.getLoanApplication().getLoanID())
+                .applicant(document.getApplicant().getApplicantId())
+                .documentStatus(document.getDocumentStatus())
+                .documentType(document.getDocumentType())
+                .fileUrl(document.getFileUrl())
+                .uploadedBy(document.getUploadedBy().getUserID())
+                .updatedAt(document.getUpdatedAt())
+                .verifiedBy(document.getVerifiedBy().getUserID())
+                .verifiedAt(document.getVerifiedAt())
+                .updatedAt(document.getUpdatedAt())
+                .remarks(document.getRemarks()).build();
     }
 
     @Override
@@ -148,6 +209,15 @@ public class DocumentServiceImpl implements DocumentService {
 
         if (count < 0) {
             throw new DocumentNotFoundException("No Documents Found for this loan application");
+        }
+    }
+
+    @Override
+    public void deleteAllDocumentsByApplicantId(UUID applicantId) {
+        long count = documentRepository.deleteAllByApplicantApplicantId(applicantId);
+
+        if (count < 0) {
+            throw new DocumentNotFoundException("No Document Found for this applicant ");
         }
     }
 
