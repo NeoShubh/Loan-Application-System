@@ -26,7 +26,7 @@ public class LoanApplicationController {
     }
 
     //Loan Application
-    @PreAuthorize("hasRole('CM')")
+    @PreAuthorize("hasRole('RM')")
     @PostMapping("")
     ResponseEntity<LoanApplicationResponseDTO> createLoanApplication(@RequestBody @Valid LoanApplicationRequestDTO loanApplicationRequestDTO) {
         LoanApplicationResponseDTO loanApplicationResponseDTO = loanApplicationService.createLoanApplication(loanApplicationRequestDTO);
@@ -71,37 +71,37 @@ public class LoanApplicationController {
     }
 
     //Loan Stage History
-    @PreAuthorize("hasRole('RM')")
+    @PreAuthorize("hasRole('RM,CM,RCU')")
     @PostMapping("/{loanId}/{userId}/users/history")
     ResponseEntity<LoanStageHistoryResponseDTO> createLoanStageHistory(@PathVariable String loanId, @PathVariable String userId,@Valid @RequestBody LoanStageHistoryRequestDTO loanStageHistoryRequestDTO) {
         LoanStageHistoryResponseDTO loanStageHistoryResponseDTO = loanApplicationService.createLoanStageHistory(loanId, userId, loanStageHistoryRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(loanStageHistoryResponseDTO);
     }
-    @PreAuthorize("hasRole('RM')")
+    @PreAuthorize("hasRole('RM,CM,RCU')")
     @GetMapping("/{loanId}/history")
     ResponseEntity<List<LoanStageHistoryResponseDTO>> getAllLoanStageHistoryByLoanId(@PathVariable String loanId) {
         List<LoanStageHistoryResponseDTO> loanStageHistoryResponseDTOlist = loanApplicationService.getAllLoanStageHistoryByLoanId(loanId);
         return ResponseEntity.status(HttpStatus.OK).body(loanStageHistoryResponseDTOlist);
     }
-    @PreAuthorize("hasRole('RM')")
+    @PreAuthorize("hasRole('RM,CM,RCU')")
     @GetMapping("/history/{loanStageHistoryId}")
     ResponseEntity<LoanStageHistoryResponseDTO> getLoanStageHistoryById(@PathVariable String loanStageHistoryId) {
         LoanStageHistoryResponseDTO loanStageHistoryResponseDTO = loanApplicationService.getLoanStageHistoryById(loanStageHistoryId);
         return ResponseEntity.ok(loanStageHistoryResponseDTO);
     }
-    @PreAuthorize("hasRole('RM')")
+    @PreAuthorize("hasRole('RM,CM,RCU')")
     @DeleteMapping("/history/{loanStageHistoryId}")
     ResponseEntity<String> deleteLoanStageHistoryById(@PathVariable String loanStageHistoryId) {
         loanApplicationService.deleteLoanStageHistoryById(loanStageHistoryId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("content deleted");
     }
-    @PreAuthorize("hasRole('RM')")
+    @PreAuthorize("hasRole('RM,CM,RCU')")
     @DeleteMapping("/{loanId}/history")
     ResponseEntity<String> deleteAllLoanStageHistoryByLoanId(@PathVariable String loanId) {
         loanApplicationService.deleteAllLoanStageHistoryByLoanId(loanId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("content deleted");
     }
-    @PreAuthorize("hasRole('RM')")
+    @PreAuthorize("hasRole('RM,CM,RCU')")
     @PutMapping("/history/{loanStageHistoryId}")
     ResponseEntity<LoanStageHistoryResponseDTO> updateLoanStageHistory(@PathVariable String loanStageHistoryId, @RequestBody LoanStageHistoryRequestDTO loanStageHistoryRequestDTO) {
         LoanStageHistoryResponseDTO loanStageHistoryResponseDTO = loanApplicationService.updateLoanStageHistory(loanStageHistoryId, loanStageHistoryRequestDTO);
