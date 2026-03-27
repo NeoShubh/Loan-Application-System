@@ -2,8 +2,10 @@ package com.example.loanapplication.modules.documentmodule.service.impl;
 
 import com.example.loanapplication.exception.document.DocumentFormatNotAllowedException;
 import com.example.loanapplication.exception.document.DocumentNotFoundException;
-import com.example.loanapplication.modules.documentmodule.dto.DocumentRequestDTO;
-import com.example.loanapplication.modules.documentmodule.dto.DocumentResponseDTO;
+import com.example.loanapplication.exception.document.InvalidDocumentTypeException;
+import com.example.loanapplication.modules.documentmodule.dto.DocumentStatusDTO.DocumentStatusRequestDTO;
+import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentRequestDTO;
+import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentResponseDTO;
 import com.example.loanapplication.modules.documentmodule.entity.Document;
 import com.example.loanapplication.modules.documentmodule.enums.DocumentStatus;
 import com.example.loanapplication.modules.documentmodule.enums.DocumentType;
@@ -14,8 +16,10 @@ import com.example.loanapplication.modules.loanapplicationmodule.entity.Applican
 import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanApplication;
 import com.example.loanapplication.modules.usermodule.entity.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -51,8 +55,11 @@ public class DocumentServiceImpl implements DocumentService {
         document.setLoanApplication(loanApplication); //LoanApplication
         document.setApplicant(applicant); // Applicant
         document.setUploadedBy(uploadedByUser); //UploadedBy
-        document.setDocumentType(DocumentType.valueOf(documentType));//document Type
-
+        try {
+            document.setDocumentType(DocumentType.valueOf(documentType));//document Type
+        }catch(IllegalArgumentException ex){
+            throw  new InvalidDocumentTypeException("Invalid document type");
+        }
         documentRepository.save(document);
 
         return DocumentResponseDTO.builder()
@@ -79,10 +86,10 @@ public class DocumentServiceImpl implements DocumentService {
                 .fileUrl(document.getFileUrl())
                 .uploadedBy(document.getUploadedBy().getUserID())
                 .uploadedAt(document.getUploadedAt())
-                .verifiedBy(document.getVerifiedBy().getUserID())
-                .verifiedAt(document.getVerifiedAt())
+                .verifiedBy(document.getVerifiedBy() != null ? document.getVerifiedBy().getUserID() : null)                .verifiedAt(document.getVerifiedAt())
                 .updatedAt(document.getUpdatedAt())
-                .remarks(document.getRemarks()).build();
+                .remarks(document.getRemarks() != null ? document.getRemarks():null)
+                .build();
     }
 
     @Override
@@ -100,10 +107,10 @@ public class DocumentServiceImpl implements DocumentService {
                     .fileUrl(documents.get(i).getFileUrl())
                     .uploadedBy(documents.get(i).getUploadedBy().getUserID())
                     .updatedAt(documents.get(i).getUpdatedAt())
-                    .verifiedBy(documents.get(i).getVerifiedBy().getUserID())
+                    .verifiedBy(documents.get(i).getVerifiedBy() != null ? documents.get(i).getVerifiedBy().getUserID() : null)
                     .verifiedAt(documents.get(i).getVerifiedAt())
                     .updatedAt(documents.get(i).getUpdatedAt())
-                    .remarks(documents.get(i).getRemarks()).build();
+                    .remarks(documents.get(i).getRemarks()!=null ? documents.get(i).getRemarks() : null).build();
 
             documentResponseList.add(singleDocumentResponseDTO);
         }
@@ -126,10 +133,10 @@ public class DocumentServiceImpl implements DocumentService {
                     .fileUrl(documents.get(i).getFileUrl())
                     .uploadedBy(documents.get(i).getUploadedBy().getUserID())
                     .updatedAt(documents.get(i).getUpdatedAt())
-                    .verifiedBy(documents.get(i).getVerifiedBy().getUserID())
+                    .verifiedBy(documents.get(i).getVerifiedBy() != null ? documents.get(i).getVerifiedBy().getUserID() : null)
                     .verifiedAt(documents.get(i).getVerifiedAt())
                     .updatedAt(documents.get(i).getUpdatedAt())
-                    .remarks(documents.get(i).getRemarks()).build();
+                    .remarks(documents.get(i).getRemarks()!=null ? documents.get(i).getRemarks() : null).build();
 
             documentResponseList.add(singleDocumentResponseDTO);
         }
@@ -146,8 +153,13 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         if (documentRequestDTO.getDocumentType() != null) {
-            document.setDocumentType(DocumentType.valueOf(documentRequestDTO.getDocumentType()));
-        }
+            try {
+                document.setDocumentType(DocumentType.valueOf(documentRequestDTO.getDocumentType().toUpperCase()));
+            }
+            catch (IllegalArgumentException  ex){
+                throw new InvalidDocumentTypeException("The document Type is Invalid");
+            }
+            }
 
         documentRepository.save(document);
 
@@ -159,8 +171,11 @@ public class DocumentServiceImpl implements DocumentService {
                 .documentType(document.getDocumentType())
                 .fileUrl(document.getFileUrl())
                 .uploadedBy(document.getUploadedBy().getUserID())
-                .verifiedBy(document.getVerifiedBy().getUserID())
-                .remarks(document.getRemarks()).build();
+                .uploadedAt(document.getUploadedAt())
+                .verifiedBy(document.getVerifiedBy() != null ? document.getVerifiedBy().getUserID() : null)
+                .verifiedAt(document.getVerifiedAt())
+                .updatedAt(document.getUpdatedAt())
+                .remarks(document.getRemarks()!=null ? document.getRemarks() : null).build();
     }
 
     @Override
@@ -175,18 +190,35 @@ public class DocumentServiceImpl implements DocumentService {
         //uploading the new one
         String filePath = fileStorageService.saveFile(file);
         document.setFileUrl(filePath);
+        document.setUploadedAt( LocalDateTime.now());
         documentRepository.save(document);
-        return DocumentResponseDTO.builder().documentId(document.getDocumentId()).loanApplication(document.getLoanApplication().getLoanID()).applicant(document.getApplicant().getApplicantId()).documentStatus(document.getDocumentStatus()).documentType(document.getDocumentType()).fileUrl(document.getFileUrl()).uploadedBy(document.getUploadedBy().getUserID()).verifiedBy(document.getVerifiedBy().getUserID()).remarks(document.getRemarks()).build();
+        return DocumentResponseDTO.builder().
+                documentId(document.getDocumentId()).
+                loanApplication(document.getLoanApplication().getLoanID())
+                .applicant(document.getApplicant().getApplicantId())
+                .documentStatus(document.getDocumentStatus()).
+                documentType(document.getDocumentType())
+                .fileUrl(document.getFileUrl())
+                .uploadedBy(document.getUploadedBy().getUserID())
+
+                .uploadedAt(document.getUpdatedAt())
+                .verifiedBy(document.getVerifiedBy() != null ? document.getVerifiedBy().getUserID() : null)
+                .verifiedAt(document.getVerifiedAt())
+                .updatedAt(document.getUpdatedAt())
+                .remarks(document.getRemarks()!=null ? document.getRemarks() : null).build();
     }
 
     //mainly used by RCU user
     @Override
-    public DocumentResponseDTO updateDocumentStatus(UUID documentId,UUID verifiedBy, DocumentStatus documentStatus, String Remarks) {
-        Document document = documentRepository.findById(documentId).orElseThrow(() -> new DocumentNotFoundException("Document is not available"));
-        User rcuUser = User.builder().userID(verifiedBy).build();
-        document.setDocumentStatus(documentStatus);
-        document.setRemarks(Remarks);
-        document.setVerifiedBy(rcuUser);
+    public DocumentResponseDTO updateDocumentStatus(String documentId, DocumentStatusRequestDTO documentStatusRequestDTO) {
+        Document document = documentRepository.findById(UUID.fromString(documentId)).orElseThrow(() -> new DocumentNotFoundException("Document is not available"));
+        User rcuUser = User.builder().userID(UUID.fromString(documentStatusRequestDTO.getVerifiedBy())).build();
+
+            document.setDocumentStatus(DocumentStatus.valueOf(documentStatusRequestDTO.getDocumentStatus()));
+            document.setRemarks(documentStatusRequestDTO.getRemarks());
+            document.setVerifiedBy(rcuUser);
+            document.setVerifiedAt(LocalDateTime.now());
+
         documentRepository.save(document);
         return DocumentResponseDTO.builder()
                 .documentId(document.getDocumentId())
@@ -196,13 +228,13 @@ public class DocumentServiceImpl implements DocumentService {
                 .documentType(document.getDocumentType())
                 .fileUrl(document.getFileUrl())
                 .uploadedBy(document.getUploadedBy().getUserID())
-                .updatedAt(document.getUpdatedAt())
+                .uploadedAt(document.getUpdatedAt())
                 .verifiedBy(document.getVerifiedBy().getUserID())
                 .verifiedAt(document.getVerifiedAt())
                 .updatedAt(document.getUpdatedAt())
                 .remarks(document.getRemarks()).build();
     }
-
+    @Transactional
     @Override
     public void deleteAllDocumentsByLoanId(UUID loanId) {
         long count = documentRepository.deleteAllByLoanApplicationLoanID(loanId);
@@ -211,7 +243,7 @@ public class DocumentServiceImpl implements DocumentService {
             throw new DocumentNotFoundException("No Documents Found for this loan application");
         }
     }
-
+    @Transactional
     @Override
     public void deleteAllDocumentsByApplicantId(UUID applicantId) {
         long count = documentRepository.deleteAllByApplicantApplicantId(applicantId);
@@ -220,7 +252,7 @@ public class DocumentServiceImpl implements DocumentService {
             throw new DocumentNotFoundException("No Document Found for this applicant ");
         }
     }
-
+    @Transactional
     @Override
     public void deleteDocumentsById(UUID documentId) {
         Document document = documentRepository.findById(documentId).orElseThrow(() -> new DocumentNotFoundException("Document is not available"));

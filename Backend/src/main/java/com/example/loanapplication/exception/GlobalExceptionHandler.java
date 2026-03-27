@@ -4,6 +4,8 @@ import com.example.loanapplication.exception.applicant.ApplicantNotFoundExceptio
 import com.example.loanapplication.exception.applicant.PrimaryApplicantaExists;
 import com.example.loanapplication.exception.document.DocumentFormatNotAllowedException;
 import com.example.loanapplication.exception.document.DocumentNotFoundException;
+import com.example.loanapplication.exception.document.InvalidDocumentStatusException;
+import com.example.loanapplication.exception.document.InvalidDocumentTypeException;
 import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
 import com.example.loanapplication.exception.user.InvalidCredentialsException;
@@ -73,6 +75,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DocumentNotFoundException.class)
     public ResponseEntity<?> handleDocumentNotFoundException(DocumentNotFoundException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+@ExceptionHandler(InvalidDocumentTypeException.class)
+public ResponseEntity<?> handleInvalidDocumentTypeException (InvalidDocumentTypeException ex) {
+    ApiError apiError = new ApiError(ex.getMessage());
+    return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+}
+
+    @ExceptionHandler(InvalidDocumentStatusException.class)
+    public ResponseEntity<?> handleInvalidDocumentStatusException (InvalidDocumentStatusException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }

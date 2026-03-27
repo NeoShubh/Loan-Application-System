@@ -1,19 +1,10 @@
-package com.example.loanapplication.modules.documentmodule.dto;
+package com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO;
 
-import com.example.loanapplication.modules.documentmodule.enums.DocumentStatus;
-import com.example.loanapplication.modules.documentmodule.enums.DocumentType;
-import com.example.loanapplication.modules.loanapplicationmodule.entity.Applicant;
-import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanApplication;
-import com.example.loanapplication.modules.usermodule.entity.User;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 
 @Data

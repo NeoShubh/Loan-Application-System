@@ -1,12 +1,10 @@
 package com.example.loanapplication.modules.documentmodule.controller;
 
-import com.example.loanapplication.modules.documentmodule.dto.DocumentRequestDTO;
-import com.example.loanapplication.modules.documentmodule.dto.DocumentResponseDTO;
-import com.example.loanapplication.modules.documentmodule.entity.Document;
+import com.example.loanapplication.modules.documentmodule.dto.DocumentStatusDTO.DocumentStatusRequestDTO;
+import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentRequestDTO;
+import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentResponseDTO;
 import com.example.loanapplication.modules.documentmodule.enums.DocumentStatus;
 import com.example.loanapplication.modules.documentmodule.service.DocumentService;
-import jakarta.validation.Valid;
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,14 +43,14 @@ public class DocumentController {
     }
 
     @DeleteMapping("/loans/{loanId}/documents")
-    ResponseEntity<String> deleteAllDocumentsByLoanId(@PathVariable UUID loanId) {
-        documentService.deleteAllDocumentsByLoanId(loanId);
+    ResponseEntity<String> deleteAllDocumentsByLoanId(@PathVariable String loanId) {
+        documentService.deleteAllDocumentsByLoanId(UUID.fromString(loanId));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Content Deleted");
     }
 
     @DeleteMapping("/loans/applicants/{applicantId}/documents")
-    ResponseEntity<String> deleteAllDocumentsByApplicantId(@PathVariable UUID applicantId) {
-        documentService.deleteAllDocumentsByApplicantId(applicantId);
+    ResponseEntity<String> deleteAllDocumentsByApplicantId(@PathVariable String applicantId) {
+        documentService.deleteAllDocumentsByApplicantId(UUID.fromString(applicantId));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Content Deleted");
     }
 
@@ -81,8 +79,8 @@ public class DocumentController {
     }
 
     @PutMapping("/documents/{documentId}/status")
-    ResponseEntity<DocumentResponseDTO> updateDocumentStatus(UUID documentId,UUID verifiedBy,  DocumentStatus documentStatus, String Remarks){
-        DocumentResponseDTO documentResponseDTO = documentService.updateDocumentStatus(documentId, verifiedBy,documentStatus,Remarks);
+    ResponseEntity<DocumentResponseDTO> updateDocumentStatus(@PathVariable String documentId ,@RequestBody DocumentStatusRequestDTO documentStatusRequestDTO){
+        DocumentResponseDTO documentResponseDTO = documentService.updateDocumentStatus(documentId,documentStatusRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(documentResponseDTO);
     }
 

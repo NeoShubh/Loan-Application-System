@@ -1,9 +1,9 @@
 package com.example.loanapplication.modules.documentmodule.service;
 
-import com.example.loanapplication.modules.documentmodule.dto.DocumentRequestDTO;
-import com.example.loanapplication.modules.documentmodule.dto.DocumentResponseDTO;
+import com.example.loanapplication.modules.documentmodule.dto.DocumentStatusDTO.DocumentStatusRequestDTO;
+import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentRequestDTO;
+import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentResponseDTO;
 import com.example.loanapplication.modules.documentmodule.enums.DocumentStatus;
-import com.example.loanapplication.modules.documentmodule.enums.DocumentType;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +22,7 @@ public interface DocumentService {
 
      DocumentResponseDTO updateDocumentFile(UUID documentId, MultipartFile file);
 
-     DocumentResponseDTO updateDocumentStatus(UUID documentId,UUID verifiedBy, DocumentStatus documentStatus, String Remarks);
+     DocumentResponseDTO updateDocumentStatus(String documentId, DocumentStatusRequestDTO documentStatusRequestDTO);
 
      void deleteAllDocumentsByLoanId(UUID loanId);
 
