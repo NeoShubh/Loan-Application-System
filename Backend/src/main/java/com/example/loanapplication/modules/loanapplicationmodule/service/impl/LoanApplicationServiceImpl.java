@@ -13,7 +13,7 @@ import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanStag
 import com.example.loanapplication.modules.loanapplicationmodule.enums.CreditStatus;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanStage;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanType;
-import com.example.loanapplication.modules.loanapplicationmodule.enums.RCUStatus;
+import com.example.loanapplication.modules.rcumodule.enums.RCUStatus;
 import com.example.loanapplication.modules.loanapplicationmodule.repository.LoanApplicationRepository;
 import com.example.loanapplication.modules.loanapplicationmodule.repository.LoanStageHistoryRepository;
 import com.example.loanapplication.modules.loanapplicationmodule.service.ApplicantService;

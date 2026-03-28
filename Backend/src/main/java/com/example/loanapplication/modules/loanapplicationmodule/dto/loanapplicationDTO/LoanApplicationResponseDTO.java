@@ -3,9 +3,7 @@ package com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplic
 import com.example.loanapplication.modules.loanapplicationmodule.enums.CreditStatus;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanStage;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanType;
-import com.example.loanapplication.modules.loanapplicationmodule.enums.RCUStatus;
-import com.example.loanapplication.modules.usermodule.entity.User;
-import jakarta.persistence.*;
+import com.example.loanapplication.modules.rcumodule.enums.RCUStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,19 +1,11 @@
 package com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplicationDTO;
 
-import com.example.loanapplication.modules.loanapplicationmodule.enums.CreditStatus;
-import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanStage;
-import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanType;
-import com.example.loanapplication.modules.loanapplicationmodule.enums.RCUStatus;
-import com.example.loanapplication.modules.usermodule.entity.User;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 @Data
 @Builder
 @NoArgsConstructor
