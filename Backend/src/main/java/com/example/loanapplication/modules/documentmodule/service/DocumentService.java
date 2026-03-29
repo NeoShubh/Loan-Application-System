@@ -3,6 +3,7 @@ package com.example.loanapplication.modules.documentmodule.service;
 import com.example.loanapplication.modules.documentmodule.dto.DocumentStatusDTO.DocumentStatusRequestDTO;
 import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentRequestDTO;
 import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentResponseDTO;
+import com.example.loanapplication.modules.documentmodule.entity.Document;
 import com.example.loanapplication.modules.documentmodule.enums.DocumentStatus;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -15,6 +16,7 @@ public interface DocumentService {
      DocumentResponseDTO getDocumentById(UUID documentId);
 
      List<DocumentResponseDTO> getAllDocumentsByLoanId(UUID loanId);
+     List<Document> getDocumentsByLoanId(UUID loanId);
 
      List<DocumentResponseDTO> getAllDocumentsByApplicantId(UUID applicantId);
 
@@ -29,4 +31,6 @@ public interface DocumentService {
      void deleteAllDocumentsByApplicantId(UUID applicantId);
 
      void deleteDocumentsById(UUID documentId);
+
+
 }

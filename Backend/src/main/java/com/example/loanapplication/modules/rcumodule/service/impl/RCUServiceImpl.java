@@ -1,24 +1,161 @@
 package com.example.loanapplication.modules.rcumodule.service.impl;
 
+import com.example.loanapplication.exception.document.DocumentNotFoundException;
+import com.example.loanapplication.exception.rcuCase.RCUCaseIsNotAssignedException;
+import com.example.loanapplication.exception.rcuCase.RCUCaseNotPresentException;
+import com.example.loanapplication.exception.rcuCase.RCUStatusCanNotBeChangedException;
+import com.example.loanapplication.modules.documentmodule.dto.DocumentStatusDTO.DocumentStatusRequestDTO;
+import com.example.loanapplication.modules.documentmodule.dto.WholeDocuementDTO.DocumentResponseDTO;
+import com.example.loanapplication.modules.documentmodule.entity.Document;
+import com.example.loanapplication.modules.documentmodule.enums.DocumentStatus;
+import com.example.loanapplication.modules.documentmodule.service.DocumentService;
+import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanApplication;
 import com.example.loanapplication.modules.rcumodule.dto.standardDTOs.RCUCaseResponseDTO;
+import com.example.loanapplication.modules.rcumodule.entity.RCUCase;
+import com.example.loanapplication.modules.rcumodule.enums.RCUStatus;
 import com.example.loanapplication.modules.rcumodule.repository.RCUCaseRepository;
 import com.example.loanapplication.modules.rcumodule.service.RCUService;
+import com.example.loanapplication.modules.usermodule.entity.User;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
+@Service
 public class RCUServiceImpl implements RCUService {
 
     private final RCUCaseRepository rcuCaseRepository;
+    private final DocumentService documentService;
 
-    public RCUServiceImpl(RCUCaseRepository rcuCaseRepository) {
+    public RCUServiceImpl(RCUCaseRepository rcuCaseRepository, DocumentService documentService) {
         this.rcuCaseRepository = rcuCaseRepository;
+        this.documentService = documentService;
     }
 
     @Override
     public RCUCaseResponseDTO CreateRCUCase(UUID loanId) {
 
-        
+        LoanApplication loanApplication = LoanApplication.builder().loanID(loanId).build();
+        RCUCase rcuCase = new RCUCase();
 
-        return null;
+        rcuCase.setLoan(loanApplication);
+        rcuCase.setRcuStatus(RCUStatus.PENDING);
+        rcuCase.setAssignedTo(null);
+
+        rcuCaseRepository.save(rcuCase);
+        return RCUCaseResponseDTO.builder()
+                .rcuCaseId(rcuCase.getRcuCaseId())
+                .loan(rcuCase.getLoan().getLoanID())
+                .rcuStatus(rcuCase.getRcuStatus())
+                .assignedTo(rcuCase.getAssignedTo() != null ? rcuCase.getAssignedTo().getUserID() : null)
+                .updatedAt(rcuCase.getUpdatedAt())
+                .createdAt(rcuCase.getCreatedAt())
+                .closedAt(rcuCase.getClosedAt())
+                .build();
     }
+
+    @Override
+    public void DeleteRCUCaseById(UUID rcuCaseId) {
+        RCUCase rcuCase = rcuCaseRepository.findById(rcuCaseId).orElseThrow(() -> new RCUCaseNotPresentException("RCU case is not present"));
+        rcuCaseRepository.delete(rcuCase);
+    }
+
+
+    @Override
+    public DocumentResponseDTO updateDocumentStatusAndRemarks(String documentId, DocumentStatusRequestDTO documentStatusRequestDTO) {
+        return documentService.updateDocumentStatus(documentId, documentStatusRequestDTO);
+    }
+
+    @Override
+    public DocumentResponseDTO getDocument(String documentId) {
+        return documentService.getDocumentById(UUID.fromString(documentId));
+    }
+
+    @Override
+    public List<DocumentResponseDTO> getAllDocumentByApplicant(String applicantId) {
+        return documentService.getAllDocumentsByApplicantId(UUID.fromString(applicantId));
+    }
+
+    @Override
+    public List<DocumentResponseDTO> getAllDOcumentByLoanId(String loanId) {
+        return documentService.getAllDocumentsByApplicantId(UUID.fromString(loanId));
+    }
+
+    @Override
+    public RCUCaseResponseDTO updateRCUCaseStatus(UUID rcuCaseId, RCUStatus rcuStatus) {
+        RCUCase rcuCase = rcuCaseRepository.findById(rcuCaseId).orElseThrow(() ->
+                new RCUCaseNotPresentException("RCU Case Not Found"));
+
+        if (rcuCase.getAssignedTo() == null)
+            throw new RCUCaseIsNotAssignedException("The RCU case is not assigned yet.");
+
+        if (rcuCase.getRcuStatus().equals(RCUStatus.REJECTED))
+            throw new RCUStatusCanNotBeChangedException("The RCU case is already 'rejected'. You can not make changes in RCU Status.");
+
+        if (rcuCase.getRcuStatus().equals(RCUStatus.APPROVED))
+            throw new RCUStatusCanNotBeChangedException("The RCU case is already 'approved'. You can not make changes in RCU Status.");
+
+        if (rcuCase.getRcuStatus().equals(RCUStatus.PENDING) &&
+                (rcuStatus.equals(RCUStatus.REJECTED) || rcuStatus.equals(RCUStatus.APPROVED))) {
+            rcuCase.setRcuStatus(rcuStatus);
+            rcuCase.setClosedAt(LocalDateTime.now());
+        }
+        rcuCaseRepository.save(rcuCase);
+
+        return RCUCaseResponseDTO.builder()
+                .rcuCaseId(rcuCaseId)
+                .loan(rcuCase.getLoan().getLoanID())
+                .rcuStatus(rcuCase.getRcuStatus())
+                .assignedTo(rcuCase.getAssignedTo().getUserID())
+                .updatedAt(rcuCase.getUpdatedAt())
+                .createdAt(rcuCase.getCreatedAt())
+                .closedAt(rcuCase.getClosedAt())
+                .build();
+    }
+
+    @Override
+    public RCUCaseResponseDTO AssignedRCUCase(UUID rcuCaseId, UUID assignedUser) {
+        RCUCase rcuCase = rcuCaseRepository.findById(rcuCaseId).orElseThrow(() ->
+                new RCUCaseNotPresentException("RCU Case Not Found"));
+        User AssignedUser = User.builder().userID(assignedUser).build();
+        rcuCase.setAssignedTo(AssignedUser);
+        return RCUCaseResponseDTO.builder()
+                .rcuCaseId(rcuCaseId)
+                .loan(rcuCase.getLoan().getLoanID())
+                .rcuStatus(rcuCase.getRcuStatus())
+                .assignedTo(rcuCase.getAssignedTo().getUserID())
+                .updatedAt(rcuCase.getUpdatedAt())
+                .createdAt(rcuCase.getCreatedAt())
+                .closedAt(rcuCase.getClosedAt())
+                .build();
+    }
+
+    @Override
+    public void RCUCaseDecisionMaking(UUID rcuCaseId) {
+        RCUCase rcuCase = rcuCaseRepository.findById(rcuCaseId).orElseThrow(() ->
+                new RCUCaseNotPresentException("RCU Case Not Found"));
+
+        if (rcuCase.getAssignedTo() == null) {
+            throw new RCUStatusCanNotBeChangedException("RCU User not assigned");
+        }
+
+        List<Document> documentList = documentService.getDocumentsByLoanId(rcuCase.getLoan().getLoanID());
+
+        if (documentList.isEmpty()) {
+            throw new DocumentNotFoundException("Document List is not Found");
+        }
+        boolean anyRejected = documentList.stream()
+                .anyMatch(doc -> doc.getDocumentStatus() == DocumentStatus.REJECTED);
+
+        boolean allApproved = documentList.stream()
+                .allMatch(doc -> doc.getDocumentStatus() == DocumentStatus.VERIFIED);
+
+        if (anyRejected)
+            updateRCUCaseStatus(rcuCase.getRcuCaseId(), RCUStatus.REJECTED);
+        else if (allApproved && !documentList.isEmpty())
+            updateRCUCaseStatus(rcuCase.getRcuCaseId(), RCUStatus.APPROVED);
+    }
+
+
 }

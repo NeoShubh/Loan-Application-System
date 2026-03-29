@@ -8,6 +8,9 @@ import com.example.loanapplication.exception.document.InvalidDocumentStatusExcep
 import com.example.loanapplication.exception.document.InvalidDocumentTypeException;
 import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
+import com.example.loanapplication.exception.rcuCase.RCUCaseIsNotAssignedException;
+import com.example.loanapplication.exception.rcuCase.RCUCaseNotPresentException;
+import com.example.loanapplication.exception.rcuCase.RCUStatusCanNotBeChangedException;
 import com.example.loanapplication.exception.user.InvalidCredentialsException;
 import com.example.loanapplication.exception.user.UserAlreadyExistsException;
 import com.example.loanapplication.exception.user.UserNotFoundException;
@@ -78,14 +81,21 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
-@ExceptionHandler(InvalidDocumentTypeException.class)
-public ResponseEntity<?> handleInvalidDocumentTypeException (InvalidDocumentTypeException ex) {
-    ApiError apiError = new ApiError(ex.getMessage());
-    return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
-}
+
+    @ExceptionHandler(InvalidDocumentTypeException.class)
+    public ResponseEntity<?> handleInvalidDocumentTypeException(InvalidDocumentTypeException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(InvalidDocumentStatusException.class)
-    public ResponseEntity<?> handleInvalidDocumentStatusException (InvalidDocumentStatusException ex) {
+    public ResponseEntity<?> handleInvalidDocumentStatusException(InvalidDocumentStatusException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RCUCaseNotPresentException.class)
+    public ResponseEntity<?> handleRCUCaseNotPresentException(RCUCaseNotPresentException ex) {
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
@@ -95,6 +105,19 @@ public ResponseEntity<?> handleInvalidDocumentTypeException (InvalidDocumentType
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_ACCEPTABLE);
     }
+
+    @ExceptionHandler(RCUCaseIsNotAssignedException.class)
+    public ResponseEntity<?> handleRCUCaseIsNotAssignedException(RCUCaseIsNotAssignedException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(RCUStatusCanNotBeChangedException.class)
+    public ResponseEntity<?> RCUStatusCanNotBeChangedException(RCUStatusCanNotBeChangedException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
+    }
+
 
     @ExceptionHandler(LoanApplicationNotFoundException.class)
     public ResponseEntity<ApiError> handleLoanApplicationNotFoundException(LoanApplicationNotFoundException ex) {
@@ -117,6 +140,5 @@ public ResponseEntity<?> handleInvalidDocumentTypeException (InvalidDocumentType
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(apiError);
     }
-
 
 }

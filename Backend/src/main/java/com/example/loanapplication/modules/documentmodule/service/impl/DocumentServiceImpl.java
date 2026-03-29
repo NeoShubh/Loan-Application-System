@@ -118,6 +118,12 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    public List<Document> getDocumentsByLoanId(UUID loanId) {
+        List<Document> documents = documentRepository.findAllByLoanApplication_LoanID(loanId);
+    return documents;
+    }
+
+    @Override
     public List<DocumentResponseDTO> getAllDocumentsByApplicantId(UUID applicantId) {
 
         List<Document> documents = documentRepository.findAllByApplicant_applicantId(applicantId);
