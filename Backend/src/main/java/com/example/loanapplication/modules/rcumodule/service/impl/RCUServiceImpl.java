@@ -1,6 +1,7 @@
 package com.example.loanapplication.modules.rcumodule.service.impl;
 
 import com.example.loanapplication.exception.document.DocumentNotFoundException;
+import com.example.loanapplication.exception.rcuCase.ActiveRCUCaseFoundException;
 import com.example.loanapplication.exception.rcuCase.RCUCaseIsNotAssignedException;
 import com.example.loanapplication.exception.rcuCase.RCUCaseNotPresentException;
 import com.example.loanapplication.exception.rcuCase.RCUStatusCanNotBeChangedException;
@@ -35,6 +36,10 @@ public class RCUServiceImpl implements RCUService {
 
     @Override
     public RCUCaseResponseDTO CreateRCUCase(UUID loanId) {
+
+        if(CheckRCUCaseExistsForLoanId(loanId,RCUStatus.PENDING)){
+            throw new ActiveRCUCaseFoundException("The current RCU Case should be closed with either 'Approved' or 'Rejected'");
+        }
 
         LoanApplication loanApplication = LoanApplication.builder().loanID(loanId).build();
         RCUCase rcuCase = new RCUCase();
@@ -155,6 +160,11 @@ public class RCUServiceImpl implements RCUService {
             updateRCUCaseStatus(rcuCase.getRcuCaseId(), RCUStatus.REJECTED);
         else if (allApproved && !documentList.isEmpty())
             updateRCUCaseStatus(rcuCase.getRcuCaseId(), RCUStatus.APPROVED);
+    }
+
+    @Override
+    public boolean CheckRCUCaseExistsForLoanId(UUID loanId,RCUStatus rcuStatus) {
+        return rcuCaseRepository.existsByLoan_LoanIDAndRcuStatus(loanId, rcuStatus);
     }
 
 

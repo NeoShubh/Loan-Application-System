@@ -21,4 +21,5 @@ public interface RCUService {
     RCUCaseResponseDTO updateRCUCaseStatus(UUID rcuCaseId, RCUStatus rcuStatus);
     RCUCaseResponseDTO AssignedRCUCase(UUID rcuCaseId,UUID assignedUser);
     void RCUCaseDecisionMaking(UUID rcuCaseId);
+    boolean CheckRCUCaseExistsForLoanId(UUID loanId, RCUStatus rcuStatus);
 }

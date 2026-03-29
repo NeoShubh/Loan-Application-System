@@ -8,6 +8,7 @@ import com.example.loanapplication.exception.document.InvalidDocumentStatusExcep
 import com.example.loanapplication.exception.document.InvalidDocumentTypeException;
 import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
+import com.example.loanapplication.exception.rcuCase.ActiveRCUCaseFoundException;
 import com.example.loanapplication.exception.rcuCase.RCUCaseIsNotAssignedException;
 import com.example.loanapplication.exception.rcuCase.RCUCaseNotPresentException;
 import com.example.loanapplication.exception.rcuCase.RCUStatusCanNotBeChangedException;
@@ -117,6 +118,13 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(ActiveRCUCaseFoundException.class)
+    public ResponseEntity<?> handleActiveRCUCaseFoundException(ActiveRCUCaseFoundException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
+    }
+
 
 
     @ExceptionHandler(LoanApplicationNotFoundException.class)
