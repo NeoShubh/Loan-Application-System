@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,7 +39,7 @@ public class RCUServiceImpl implements RCUService {
     @Override
     public RCUCaseResponseDTO CreateRCUCase(UUID loanId) {
 
-        if(CheckRCUCaseExistsForLoanId(loanId,RCUStatus.PENDING)){
+        if (CheckRCUCaseExistsForLoanId(loanId, RCUStatus.PENDING)) {
             throw new ActiveRCUCaseFoundException("The current RCU Case should be closed with either 'Approved' or 'Rejected'");
         }
 
@@ -82,6 +83,29 @@ public class RCUServiceImpl implements RCUService {
                 .build();
     }
 
+    @Override
+    public RCUCaseResponseDTO getRCUCaseByLoanID(UUID loanID) {
+
+        RCUCase rcuCase = rcuCaseRepository
+                .findByLoan_LoanID(loanID)
+                .orElseThrow(() -> new RCUCaseNotPresentException("RCU Case Not Found"));
+
+        return RCUCaseResponseDTO.builder()
+                .rcuCaseId(rcuCase.getRcuCaseId())
+                .loan(rcuCase.getLoan().getLoanID())
+                .rcuStatus(rcuCase.getRcuStatus())
+                .assignedTo(rcuCase.getAssignedTo() != null ?
+                        rcuCase.getAssignedTo().getUserID() : null)
+                .updatedAt(rcuCase.getUpdatedAt())
+                .createdAt(rcuCase.getCreatedAt())
+                .closedAt(rcuCase.getClosedAt())
+                .build();
+    }
+//    @Override
+//    public RCUCaseResponseDTO getRCUCaseByRCUUser(UUID rcuUserID) {
+//        return null;
+//    }
+
 
     @Override
     public DocumentResponseDTO updateDocumentStatusAndRemarks(String documentId, DocumentStatusRequestDTO documentStatusRequestDTO) {
@@ -100,7 +124,7 @@ public class RCUServiceImpl implements RCUService {
 
     @Override
     public List<DocumentResponseDTO> getAllDOcumentByLoanId(String loanId) {
-        List<Document> documents =  documentService.getDocumentsByLoanId(UUID.fromString(loanId));
+        List<Document> documents = documentService.getDocumentsByLoanId(UUID.fromString(loanId));
         List<DocumentResponseDTO> documentResponseList = new ArrayList<>();
 
         for (int i = 0; i < documents.size(); i++) {
@@ -117,7 +141,7 @@ public class RCUServiceImpl implements RCUService {
                     .verifiedAt(documents.get(i).getVerifiedAt())
                     .uploadedAt(documents.get(i).getUploadedAt())
                     .updatedAt(documents.get(i).getUpdatedAt())
-                    .remarks(documents.get(i).getRemarks()!=null ? documents.get(i).getRemarks() : null).build();
+                    .remarks(documents.get(i).getRemarks() != null ? documents.get(i).getRemarks() : null).build();
 
             documentResponseList.add(singleDocumentResponseDTO);
         }
@@ -201,7 +225,7 @@ public class RCUServiceImpl implements RCUService {
     }
 
     @Override
-    public boolean CheckRCUCaseExistsForLoanId(UUID loanId,RCUStatus rcuStatus) {
+    public boolean CheckRCUCaseExistsForLoanId(UUID loanId, RCUStatus rcuStatus) {
         return rcuCaseRepository.existsByLoan_LoanIDAndRcuStatus(loanId, rcuStatus);
     }
 

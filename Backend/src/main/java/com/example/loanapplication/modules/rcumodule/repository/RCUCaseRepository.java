@@ -10,4 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface RCUCaseRepository extends JpaRepository<RCUCase, UUID> {
-    boolean existsByLoan_LoanIDAndRcuStatus(UUID loanId, RCUStatus rcuStatus);}
+    boolean existsByLoan_LoanIDAndRcuStatus(UUID loanId, RCUStatus rcuStatus);
+    Optional<RCUCase> findByLoan_LoanID(UUID loanID);
+}

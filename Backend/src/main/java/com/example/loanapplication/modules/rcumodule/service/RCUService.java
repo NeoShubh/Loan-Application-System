@@ -16,6 +16,8 @@ public interface RCUService {
 
     RCUCaseResponseDTO getRCUCase(UUID rcuCaseId);
 
+    RCUCaseResponseDTO getRCUCaseByLoanID(UUID loanID);
+
     DocumentResponseDTO updateDocumentStatusAndRemarks(String documentId, DocumentStatusRequestDTO documentStatusRequestDTO);
 
     DocumentResponseDTO getDocument(String documentId);

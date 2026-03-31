@@ -42,7 +42,12 @@ public class RCUController {
         RCUCaseResponseDTO rcuCaseResponseDTO = rcuService.getRCUCase(UUID.fromString(rcuCaseId));
         return ResponseEntity.status(HttpStatus.FOUND).body(rcuCaseResponseDTO);
     }
-
+    @PreAuthorize("hasAnyRole('RM', 'RCU')")
+    @GetMapping("/loans/{loanID}")
+    ResponseEntity<RCUCaseResponseDTO> getRCUCaseByLoanID(@PathVariable UUID loanID){
+        RCUCaseResponseDTO rcuCaseResponseDTO = rcuService.getRCUCaseByLoanID(loanID);
+        return ResponseEntity.status(HttpStatus.FOUND).body(rcuCaseResponseDTO);
+    }
     //Done
     @PreAuthorize("hasAnyRole('RCU')")
     @DeleteMapping("/cases/{rcuCaseId}")
