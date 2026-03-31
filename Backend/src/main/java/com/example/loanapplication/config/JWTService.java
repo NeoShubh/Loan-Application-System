@@ -11,7 +11,7 @@ import java.util.Date;
 @Service
 public class JWTService {
     private final String SECRET_KEY = "my-secret-key-my-secret-key-my-secret-key";
-    private final long ACCESS_EXPIRATION = 1000 * 60 * 30; // 15 min
+    private final long ACCESS_EXPIRATION = 1000 * 60 * 60 * 8; // 60 min
 //private final long ACCESS_EXPIRATION = 30000; //30 sec.
 //private final long ACCESS_EXPIRATION = 1000 * 60 * 2;
     private final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 7; // 7 days

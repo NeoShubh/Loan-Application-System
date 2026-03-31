@@ -30,7 +30,7 @@ public class DocumentController {
         DocumentResponseDTO documentResponseDTO = documentService.createDocument(file, loanApplicationId, applicantId, documentType, UploadedBy);
         return ResponseEntity.status(HttpStatus.CREATED).body(documentResponseDTO);
     }
-    @PreAuthorize("hasRole('RM,CM,RCU')")
+    @PreAuthorize("hasAnyRole('RM','CM','RCU')")
     @GetMapping("/documents/{documentId}")
     ResponseEntity<DocumentResponseDTO> getDocumentById(@PathVariable UUID documentId) {
         DocumentResponseDTO documentResponseDTO = documentService.getDocumentById(documentId);
@@ -60,13 +60,13 @@ public class DocumentController {
         documentService.deleteDocumentsById(documentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Content Deleted");
     }
-    @PreAuthorize("hasRole('RM,CM,RCU')")
+    @PreAuthorize("hasAnyRole('RM','CM','RCU')")
     @GetMapping("/loans/{loanId}/documents")
     ResponseEntity<List<DocumentResponseDTO>> getAllDocumentsByLoanId(@PathVariable UUID loanId){
         List <DocumentResponseDTO> responesList = documentService.getAllDocumentsByLoanId(loanId);
         return ResponseEntity.status(HttpStatus.FOUND).body(responesList);
     }
-    @PreAuthorize("hasRole('RM,CM,RCU')")
+    @PreAuthorize("hasAnyRole('RM','CM','RCU')")
     @GetMapping("/loans/applicants/{applicantId}/documents")
     ResponseEntity<List<DocumentResponseDTO>> getAllDocumentsByApplicantId(@PathVariable UUID applicantId){
         List <DocumentResponseDTO> responselist = documentService.getAllDocumentsByApplicantId(applicantId);
@@ -78,7 +78,7 @@ public class DocumentController {
         DocumentResponseDTO documentResponseDTO = documentService.updateDocumentFile(documentId,file);
         return ResponseEntity.status(HttpStatus.OK).body(documentResponseDTO);
     }
-    @PreAuthorize("hasRole('RM,CM,RCU')")
+    @PreAuthorize("hasAnyRole('RM','CM','RCU')")
     @PutMapping("/documents/{documentId}/status")
     ResponseEntity<DocumentResponseDTO> updateDocumentStatus(@PathVariable String documentId ,@RequestBody DocumentStatusRequestDTO documentStatusRequestDTO){
         DocumentResponseDTO documentResponseDTO = documentService.updateDocumentStatus(documentId,documentStatusRequestDTO);
