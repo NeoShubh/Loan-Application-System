@@ -4,6 +4,7 @@ import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHi
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryResponseDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplicationDTO.LoanApplicationRequestDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanapplicationDTO.LoanApplicationResponseDTO;
+import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanStage;
 
 import java.util.List;
 //import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanApplication;
@@ -18,6 +19,8 @@ public interface LoanApplicationService {
     LoanApplicationResponseDTO getLoanApplicationById(String loanId);
 
     LoanApplicationResponseDTO updateLoanApplication(String loanID, LoanApplicationRequestDTO loanApplicationRequestDTO);
+
+    LoanApplicationResponseDTO updateLoanApplicationStage(String loanID, LoanStage loanStage);
 
     void deleteLoanApplication(String loanId);
 

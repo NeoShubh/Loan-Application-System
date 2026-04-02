@@ -38,11 +38,16 @@ public class RCUServiceImpl implements RCUService {
 
     @Override
     public RCUCaseResponseDTO CreateRCUCase(UUID loanId) {
-
+        if (CheckRCUCaseExistsForLoanId(loanId, RCUStatus.PENDING)) {
+            return null; // skip duplicate
+        }
         if (CheckRCUCaseExistsForLoanId(loanId, RCUStatus.PENDING)) {
             throw new ActiveRCUCaseFoundException("The current RCU Case should be closed with either 'Approved' or 'Rejected'");
         }
-
+        // 👉 Idempotency check FIRST
+        if (CheckRCUCaseExistsForLoanId(loanId, RCUStatus.PENDING)) {
+            return null; // or just return existing / skip
+        }
         LoanApplication loanApplication = LoanApplication.builder().loanID(loanId).build();
         RCUCase rcuCase = new RCUCase();
 

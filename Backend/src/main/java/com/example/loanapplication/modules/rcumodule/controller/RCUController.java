@@ -27,7 +27,6 @@ public class RCUController {
         this.rcuService = rcuService;
     }
 
-
     //RCU CASE METHODs
     //Done
     @PreAuthorize("hasAnyRole('RCU')")

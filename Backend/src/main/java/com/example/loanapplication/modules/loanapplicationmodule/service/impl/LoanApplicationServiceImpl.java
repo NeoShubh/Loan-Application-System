@@ -2,7 +2,10 @@ package com.example.loanapplication.modules.loanapplicationmodule.service.impl;
 
 import com.example.loanapplication.exception.loanapplication.LoanApplicationNotFoundException;
 import com.example.loanapplication.exception.loanapplication.LoanStageHistoryNotFoundException;
+import com.example.loanapplication.exception.rcuCase.ActiveRCUCaseFoundException;
 import com.example.loanapplication.exception.user.UserNotFoundException;
+import com.example.loanapplication.kafka.events.LoanStageChangedEvent;
+import com.example.loanapplication.kafka.events.LoanStageHistoryEvent;
 import com.example.loanapplication.modules.documentmodule.service.DocumentService;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryRequestDTO;
 import com.example.loanapplication.modules.loanapplicationmodule.dto.loanStageHistoryDTO.LoanStageHistoryResponseDTO;
@@ -13,13 +16,15 @@ import com.example.loanapplication.modules.loanapplicationmodule.entity.LoanStag
 import com.example.loanapplication.modules.loanapplicationmodule.enums.CreditStatus;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanStage;
 import com.example.loanapplication.modules.loanapplicationmodule.enums.LoanType;
-import com.example.loanapplication.modules.rcumodule.enums.RCUStatus;
 import com.example.loanapplication.modules.loanapplicationmodule.repository.LoanApplicationRepository;
 import com.example.loanapplication.modules.loanapplicationmodule.repository.LoanStageHistoryRepository;
 import com.example.loanapplication.modules.loanapplicationmodule.service.ApplicantService;
 import com.example.loanapplication.modules.loanapplicationmodule.service.LoanApplicationService;
+import com.example.loanapplication.modules.rcumodule.enums.RCUStatus;
 import com.example.loanapplication.modules.usermodule.entity.User;
 import com.example.loanapplication.modules.usermodule.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +40,9 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private final UserService userService;
     private final ApplicantService applicantService;
     private final DocumentService documentService;
+
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     public LoanApplicationServiceImpl(
             LoanApplicationRepository loanApplicationRepository,
@@ -66,18 +74,23 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
         loanApplicationRepository.save(loanApplication);
 
-        // Loan Stage History Creation
+        ////Loan Stage history creation with KAFKA
         LoanStageHistoryRequestDTO loanStageHistoryRequestDTO = LoanStageHistoryRequestDTO.builder()
                 .loanApplicationId(String.valueOf(loanApplication.getLoanID()))
                 .changedBy(String.valueOf(user.getUserID()))
                 .oldStage(null)
                 .currentStage(loanApplication.getLoanStage()).build();
         System.out.println(loanStageHistoryRequestDTO);
+        //event making
+        LoanStageHistoryEvent loanStageHistoryEvent = LoanStageHistoryEvent.builder().
+                loanID(String.valueOf(loanApplication.getLoanID()))
+                .userID(String.valueOf(user.getUserID()))
+                .loanStageHistoryRequestDTO(loanStageHistoryRequestDTO).build();
 
-
-
-        LoanStageHistoryResponseDTO loanStageHistoryResponseDTO =
-                createLoanStageHistory(String.valueOf(loanApplication.getLoanID()), String.valueOf(user.getUserID()), loanStageHistoryRequestDTO);
+        kafkaTemplate.send("loan-stage-history-events", loanStageHistoryEvent);
+        System.out.println("Event sent: " + loanStageHistoryEvent);
+//        LoanStageHistoryResponseDTO loanStageHistoryResponseDTO =
+//                createLoanStageHistory(String.valueOf(loanApplication.getLoanID()), String.valueOf(user.getUserID()), loanStageHistoryRequestDTO);
 
 
         return LoanApplicationResponseDTO.builder()
@@ -90,6 +103,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .createdBy(loanApplication.getCreatedBy().getUserID())
                 .updatedAt(loanApplication.getUpdatedAt()).build();
     }
+
     @Override
     public List<LoanApplicationResponseDTO> getAllLoanApplicationByUserID(String userId) {
 
@@ -119,7 +133,6 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
 
-
     @Override
     public LoanApplicationResponseDTO getLoanApplicationById(String loanId) {
         LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanId)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not found"));
@@ -140,20 +153,6 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         User user = User.builder().userID(UUID.fromString(loanApplicationRequestDTO.getCreatedBy())).build();
         if (loanApplicationRequestDTO.getLoanType() != null) {
             loanApplication.setLoanType(LoanType.valueOf(loanApplicationRequestDTO.getLoanType()));
-        }
-
-        if (loanApplicationRequestDTO.getLoanStage() != null) {
-            loanApplication.setLoanStage(LoanStage.valueOf(loanApplicationRequestDTO.getLoanStage()));
-            //Loan Stage history creation
-            LoanStageHistoryRequestDTO loanStageHistoryRequestDTO = LoanStageHistoryRequestDTO.builder()
-                    .loanApplicationId(String.valueOf(loanApplication.getLoanID()))
-                    .changedBy(String.valueOf(user.getUserID()))
-                    .oldStage(loanApplication.getLoanStage())
-                    .currentStage(LoanStage.valueOf(loanApplicationRequestDTO.getLoanStage())).build();
-
-            LoanStageHistoryResponseDTO loanStageHistoryResponseDTO =
-                    createLoanStageHistory(String.valueOf(loanApplication.getLoanID()), String.valueOf(user.getUserID()), loanStageHistoryRequestDTO);
-
         }
 
         if (loanApplicationRequestDTO.getRcuStatus() != null) {
@@ -182,6 +181,60 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .updatedAt(loanApplication.getUpdatedAt())
                 .build();
     }
+
+    @Override
+    public LoanApplicationResponseDTO updateLoanApplicationStage(String loanID, LoanStage loanStage) {
+        LoanApplication loanApplication = loanApplicationRepository.findById(UUID.fromString(loanID)).orElseThrow(() -> new LoanApplicationNotFoundException("Loan Application Not Found"));
+        User user = User.builder().userID(loanApplication.getCreatedBy().getUserID()).build();
+        LoanStage oldStage = loanApplication.getLoanStage();
+        if(oldStage == LoanStage.CREDIT_EVALUATION){
+            throw new ActiveRCUCaseFoundException("The Case stage is already CREDIT EVALUATION");
+        }
+
+        if (loanStage != null) {
+            if (loanApplication.getLoanStage() == LoanStage.ON_BOARDING && loanStage == LoanStage.CREDIT_EVALUATION) {
+                loanApplication.setLoanStage(loanStage);
+
+                //RCU case creation with KAFKA
+                LoanStageChangedEvent event = new LoanStageChangedEvent(
+                        loanApplication.getLoanID(),
+                        loanStage.name()
+                );
+                kafkaTemplate.send("loan-stage-events", event);
+                System.out.println("Event sent: " + event);
+
+            }
+
+            //Loan Stage history creation with KAFKA
+            LoanStageHistoryRequestDTO loanStageHistoryRequestDTO = LoanStageHistoryRequestDTO.builder()
+                    .loanApplicationId(String.valueOf(loanApplication.getLoanID()))
+                    .changedBy(String.valueOf(user.getUserID()))
+                    .oldStage(oldStage)
+                    .currentStage(loanStage).build();
+            //event making
+            LoanStageHistoryEvent loanStageHistoryEvent = LoanStageHistoryEvent.builder().
+                    loanID(String.valueOf(loanApplication.getLoanID()))
+                    .userID(String.valueOf(user.getUserID()))
+                    .loanStageHistoryRequestDTO(loanStageHistoryRequestDTO).build();
+
+            kafkaTemplate.send("loan-stage-history-events", loanStageHistoryEvent);
+            System.out.println("Event sent: " + loanStageHistoryEvent);
+
+        }
+
+        loanApplicationRepository.save(loanApplication);
+        return LoanApplicationResponseDTO.builder()
+                .loanID(loanApplication.getLoanID())
+                .loanType(loanApplication.getLoanType())
+                .loanStage(loanApplication.getLoanStage())
+                .rcuStatus(loanApplication.getRcuStatus())
+                .creditStatus(loanApplication.getCreditStatus())
+                .createdBy(loanApplication.getCreatedBy().getUserID())
+                .createdAt(loanApplication.getCreatedAt())
+                .updatedAt(loanApplication.getUpdatedAt())
+                .build();
+    }
+
     @Transactional
     @Override
     public void deleteLoanApplication(String loanId) {
